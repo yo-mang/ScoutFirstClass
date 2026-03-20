@@ -4,249 +4,88 @@
 <meta charset="UTF-8">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap');
-
-* { box-sizing: border-box; margin: 0; padding: 0; }
-
-:root {
-  --scout-green: #2d6a4f;
-  --scout-light: #52b788;
-  --scout-gold: #e9a61a;
-  --scout-gold-light: #ffd166;
-  --scout-earth: #8b5e3c;
-  --scout-sky: #4da8da;
-  --scout-red: #e05252;
-  --bg: #f0f7f1;
-  --card: #ffffff;
-  --text: #1a2e22;
-  --muted: #5a7a65;
-  --badge-bg: #e8f5ee;
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --sg:#2d6a4f;--sl:#52b788;--gold:#e9a61a;--gold-l:#ffd166;
+  --earth:#8b5e3c;--sky:#4da8da;--red:#e05252;
+  --bg:#f0f7f1;--card:#ffffff;--text:#1a2e22;--muted:#5a7a65;--badge:#e8f5ee;
 }
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #0f1f15;
-    --card: #1a2e22;
-    --text: #e8f5ee;
-    --muted: #88b89a;
-    --badge-bg: #243830;
-    --scout-green: #52b788;
-    --scout-light: #80cfa7;
-  }
-}
-
-body {
-  font-family: 'Nunito', sans-serif;
-  background: var(--bg);
-  color: var(--text);
-  min-height: 100vh;
-  overflow-x: hidden;
-}
-
-h1, h2, .display {
-  font-family: 'Fredoka One', cursive;
-}
-
-/* ─── Layout ─── */
-#app { max-width: 760px; margin: 0 auto; padding: 16px; }
-
-/* ─── Top bar ─── */
-.topbar {
-  display: flex; align-items: center; justify-content: space-between;
-  background: var(--scout-green); color: white;
-  border-radius: 16px; padding: 12px 20px; margin-bottom: 16px;
-}
-.topbar-title { font-family: 'Fredoka One'; font-size: 20px; letter-spacing: 0.5px; }
-.topbar-right { display: flex; align-items: center; gap: 12px; }
-.xp-pill {
-  background: rgba(255,255,255,0.2); border-radius: 20px; padding: 4px 12px;
-  font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 4px;
-}
-.streak-pill {
-  background: var(--scout-gold); color: #1a2e22; border-radius: 20px;
-  padding: 4px 10px; font-size: 13px; font-weight: 800;
-}
-
-/* ─── Progress bar ─── */
-.progress-wrap { background: var(--badge-bg); border-radius: 12px; padding: 12px 16px; margin-bottom: 16px; }
-.progress-label { font-size: 12px; font-weight: 700; color: var(--muted); margin-bottom: 6px; display: flex; justify-content: space-between; }
-.progress-track { background: rgba(0,0,0,0.1); border-radius: 10px; height: 12px; overflow: hidden; }
-.progress-fill { height: 100%; border-radius: 10px; background: linear-gradient(90deg, var(--scout-light), var(--scout-gold)); transition: width 0.6s ease; }
-
-/* ─── Category grid ─── */
-.category-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; }
-.cat-card {
-  background: var(--card); border-radius: 16px; padding: 16px;
-  cursor: pointer; transition: transform 0.15s, box-shadow 0.15s;
-  border: 2px solid transparent; text-align: center;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-}
-.cat-card:hover { transform: translateY(-3px); box-shadow: 0 6px 16px rgba(0,0,0,0.12); }
-.cat-card.locked { opacity: 0.5; cursor: not-allowed; }
-.cat-icon { font-size: 36px; margin-bottom: 8px; }
-.cat-name { font-family: 'Fredoka One'; font-size: 15px; color: var(--text); }
-.cat-progress { font-size: 11px; color: var(--muted); margin-top: 4px; }
-.cat-stars { display: flex; justify-content: center; gap: 2px; margin-top: 4px; }
-.star { font-size: 14px; color: #ddd; }
-.star.filled { color: var(--scout-gold); }
-
-/* ─── Quiz card ─── */
-.quiz-header {
-  display: flex; align-items: center; gap: 12px; margin-bottom: 16px;
-}
-.back-btn {
-  background: var(--badge-bg); border: none; border-radius: 10px;
-  padding: 8px 14px; cursor: pointer; font-size: 14px; font-weight: 700;
-  color: var(--muted); transition: background 0.15s;
-}
-.back-btn:hover { background: rgba(0,0,0,0.08); }
-.q-category { font-family: 'Fredoka One'; font-size: 18px; flex: 1; }
-.q-counter { font-size: 13px; color: var(--muted); font-weight: 700; }
-
-.quiz-card {
-  background: var(--card); border-radius: 20px; padding: 24px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.08); margin-bottom: 16px;
-}
-.q-type-badge {
-  display: inline-block; font-size: 11px; font-weight: 800;
-  padding: 3px 10px; border-radius: 20px; margin-bottom: 12px; letter-spacing: 0.5px;
-  text-transform: uppercase;
-}
-.mcq-badge { background: #dce8ff; color: #1a4db8; }
-.frq-badge { background: #ffe4cc; color: #a84400; }
-@media (prefers-color-scheme: dark) {
-  .mcq-badge { background: #1a2e5a; color: #90b8ff; }
-  .frq-badge { background: #3a1f00; color: #ffb07a; }
-}
-.q-text { font-size: 17px; font-weight: 700; line-height: 1.5; margin-bottom: 20px; }
-.q-hint { font-size: 13px; color: var(--muted); margin-bottom: 16px; font-style: italic; }
-
-/* MCQ options */
-.mcq-options { display: flex; flex-direction: column; gap: 10px; }
-.mcq-option {
-  background: var(--badge-bg); border: 2px solid transparent;
-  border-radius: 12px; padding: 12px 16px; cursor: pointer;
-  font-size: 15px; font-weight: 600; text-align: left;
-  transition: all 0.15s; color: var(--text);
-}
-.mcq-option:hover:not(.disabled) { border-color: var(--scout-light); background: rgba(82,183,136,0.1); }
-.mcq-option.correct { border-color: #2d6a4f; background: #c8f0dc; color: #1a3d2a; }
-.mcq-option.wrong { border-color: #e05252; background: #fde8e8; color: #7a1515; }
-.mcq-option.reveal { border-color: #2d6a4f; background: #e8f5ee; }
-.mcq-option.disabled { cursor: default; }
-@media (prefers-color-scheme: dark) {
-  .mcq-option.correct { background: #1a3d2a; color: #a8ffd0; }
-  .mcq-option.wrong { background: #3d1a1a; color: #ffaaaa; }
-  .mcq-option.reveal { background: #1a3020; color: #88d4a8; }
-}
-
-/* FRQ */
-.frq-textarea {
-  width: 100%; border: 2px solid var(--scout-light); border-radius: 12px;
-  padding: 12px 14px; font-size: 15px; font-family: 'Nunito', sans-serif;
-  background: var(--bg); color: var(--text); resize: vertical; min-height: 100px;
-  outline: none; transition: border-color 0.15s;
-}
-.frq-textarea:focus { border-color: var(--scout-gold); }
-.frq-note { font-size: 12px; color: var(--muted); margin-top: 6px; }
-
-/* Action buttons */
-.action-row { display: flex; gap: 10px; margin-top: 16px; }
-.btn {
-  border: none; border-radius: 12px; padding: 12px 24px;
-  font-family: 'Nunito', sans-serif; font-size: 15px; font-weight: 800;
-  cursor: pointer; transition: all 0.15s; flex: 1;
-}
-.btn-primary { background: var(--scout-green); color: white; }
-.btn-primary:hover { background: var(--scout-light); }
-.btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
-.btn-secondary { background: var(--badge-bg); color: var(--muted); }
-.btn-secondary:hover { background: rgba(0,0,0,0.08); }
-
-/* Feedback box */
-.feedback-box {
-  border-radius: 14px; padding: 16px; margin-top: 14px; font-size: 14px; line-height: 1.6;
-}
-.feedback-correct { background: #c8f0dc; color: #1a3d2a; border-left: 4px solid #2d6a4f; }
-.feedback-wrong { background: #fde8e8; color: #7a1515; border-left: 4px solid #e05252; }
-.feedback-ai { background: #fff8e1; color: #5a3a00; border-left: 4px solid var(--scout-gold); }
-@media (prefers-color-scheme: dark) {
-  .feedback-correct { background: #1a3d2a; color: #a8ffd0; }
-  .feedback-wrong { background: #3d1a1a; color: #ffaaaa; }
-  .feedback-ai { background: #2a2000; color: #ffe08a; }
-}
-.feedback-label { font-weight: 800; font-size: 15px; margin-bottom: 6px; display: flex; align-items: center; gap: 6px; }
-.loading-dots span {
-  display: inline-block; width: 7px; height: 7px; border-radius: 50%;
-  background: var(--scout-gold); margin: 0 2px;
-  animation: dot-bounce 1s infinite ease-in-out;
-}
-.loading-dots span:nth-child(2) { animation-delay: 0.15s; }
-.loading-dots span:nth-child(3) { animation-delay: 0.30s; }
-@keyframes dot-bounce { 0%,80%,100%{transform:translateY(0)} 40%{transform:translateY(-8px)} }
-
-/* XP pop */
-.xp-pop {
-  position: fixed; top: 60px; right: 24px; z-index: 999;
-  background: var(--scout-gold); color: #1a2e22; border-radius: 20px;
-  padding: 8px 18px; font-family: 'Fredoka One'; font-size: 20px;
-  pointer-events: none; animation: xp-float 1.8s ease-out forwards;
-}
-@keyframes xp-float { 0%{opacity:1;transform:translateY(0)} 70%{opacity:1;transform:translateY(-30px)} 100%{opacity:0;transform:translateY(-50px)} }
-
-/* Results screen */
-.results-card {
-  background: var(--card); border-radius: 24px; padding: 32px 24px;
-  text-align: center; box-shadow: 0 4px 24px rgba(0,0,0,0.1);
-}
-.results-icon { font-size: 72px; margin-bottom: 12px; }
-.results-title { font-family: 'Fredoka One'; font-size: 32px; margin-bottom: 8px; }
-.results-sub { font-size: 15px; color: var(--muted); margin-bottom: 24px; }
-.score-ring {
-  width: 120px; height: 120px; border-radius: 50%;
-  border: 8px solid var(--scout-green); margin: 0 auto 20px;
-  display: flex; align-items: center; justify-content: center;
-  flex-direction: column;
-}
-.score-num { font-family: 'Fredoka One'; font-size: 34px; color: var(--scout-green); }
-.score-denom { font-size: 13px; color: var(--muted); }
-.stat-row { display: flex; justify-content: center; gap: 20px; margin-bottom: 24px; }
-.stat-box { text-align: center; }
-.stat-val { font-family: 'Fredoka One'; font-size: 22px; color: var(--scout-gold); }
-.stat-lbl { font-size: 12px; color: var(--muted); }
-.badges-earned { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-bottom: 20px; }
-.badge-chip {
-  background: var(--scout-gold-light); color: #4a2a00;
-  border-radius: 20px; padding: 6px 14px;
-  font-size: 13px; font-weight: 700;
-}
-
-/* Achievements toast */
-.achievement-toast {
-  position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px);
-  background: var(--scout-green); color: white; border-radius: 20px;
-  padding: 12px 24px; font-size: 14px; font-weight: 700; z-index: 999;
-  transition: transform 0.4s cubic-bezier(.34,1.56,.64,1);
-  display: flex; align-items: center; gap: 8px; white-space: nowrap;
-}
-.achievement-toast.show { transform: translateX(-50%) translateY(0); }
-
-/* Campfire decoration */
-.section-divider {
-  text-align: center; font-size: 12px; color: var(--muted);
-  margin: 8px 0; letter-spacing: 1px; font-weight: 700;
-}
-
-/* Timer */
-.timer-bar-wrap { height: 6px; background: rgba(0,0,0,0.1); border-radius: 4px; margin-bottom: 16px; overflow: hidden; }
-.timer-bar { height: 100%; border-radius: 4px; background: var(--scout-sky); transition: width 1s linear; }
-.timer-bar.warning { background: var(--scout-gold); }
-.timer-bar.danger { background: var(--scout-red); }
-
-/* Responsive */
-@media (max-width: 480px) {
-  .category-grid { grid-template-columns: 1fr 1fr; }
-  .q-text { font-size: 15px; }
-}
+@media(prefers-color-scheme:dark){:root{--bg:#0f1f15;--card:#1a2e22;--text:#e8f5ee;--muted:#88b89a;--badge:#243830;--sg:#52b788;--sl:#80cfa7;}}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
+h1,h2,.display{font-family:'Fredoka One',cursive;}
+#app{max-width:780px;margin:0 auto;padding:16px;}
+.topbar{display:flex;align-items:center;justify-content:space-between;background:var(--sg);color:white;border-radius:16px;padding:12px 20px;margin-bottom:14px;}
+.topbar-title{font-family:'Fredoka One';font-size:20px;}
+.topbar-right{display:flex;align-items:center;gap:10px;}
+.xp-pill{background:rgba(255,255,255,0.2);border-radius:20px;padding:4px 12px;font-size:13px;font-weight:700;display:flex;align-items:center;gap:4px;}
+.streak-pill{background:var(--gold);color:#1a2e22;border-radius:20px;padding:4px 10px;font-size:13px;font-weight:800;}
+.progress-wrap{background:var(--badge);border-radius:12px;padding:12px 16px;margin-bottom:14px;}
+.progress-label{font-size:12px;font-weight:700;color:var(--muted);margin-bottom:6px;display:flex;justify-content:space-between;}
+.progress-track{background:rgba(0,0,0,0.1);border-radius:10px;height:12px;overflow:hidden;}
+.progress-fill{height:100%;border-radius:10px;background:linear-gradient(90deg,var(--sl),var(--gold));transition:width .6s ease;}
+.section-label{font-size:11px;font-weight:800;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin:14px 0 8px;}
+.category-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:10px;}
+.cat-card{background:var(--card);border-radius:16px;padding:14px;cursor:pointer;transition:transform .15s,box-shadow .15s;border:2px solid transparent;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.08);}
+.cat-card:hover{transform:translateY(-3px);box-shadow:0 6px 16px rgba(0,0,0,.12);}
+.cat-icon{font-size:32px;margin-bottom:6px;}
+.cat-name{font-family:'Fredoka One';font-size:14px;color:var(--text);}
+.cat-req{font-size:10px;color:var(--muted);margin-top:2px;}
+.cat-progress{font-size:11px;color:var(--muted);margin-top:3px;}
+.cat-stars{display:flex;justify-content:center;gap:2px;margin-top:3px;}
+.star{font-size:13px;color:#ddd;}.star.filled{color:var(--gold);}
+.quiz-header{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+.back-btn{background:var(--badge);border:none;border-radius:10px;padding:8px 14px;cursor:pointer;font-size:14px;font-weight:700;color:var(--muted);transition:background .15s;}
+.back-btn:hover{background:rgba(0,0,0,.08);}
+.q-category{font-family:'Fredoka One';font-size:17px;flex:1;}
+.q-counter{font-size:13px;color:var(--muted);font-weight:700;}
+.quiz-card{background:var(--card);border-radius:20px;padding:22px;box-shadow:0 4px 20px rgba(0,0,0,.08);margin-bottom:14px;}
+.q-type-badge{display:inline-block;font-size:11px;font-weight:800;padding:3px 10px;border-radius:20px;margin-bottom:10px;letter-spacing:.5px;text-transform:uppercase;}
+.mcq-badge{background:#dce8ff;color:#1a4db8;}.frq-badge{background:#ffe4cc;color:#a84400;}
+@media(prefers-color-scheme:dark){.mcq-badge{background:#1a2e5a;color:#90b8ff;}.frq-badge{background:#3a1f00;color:#ffb07a;}}
+.req-tag{display:inline-block;font-size:10px;font-weight:800;padding:2px 8px;border-radius:10px;background:var(--badge);color:var(--muted);margin-bottom:8px;margin-left:6px;}
+.q-text{font-size:16px;font-weight:700;line-height:1.5;margin-bottom:16px;}
+.q-hint{font-size:13px;color:var(--muted);margin-bottom:14px;font-style:italic;}
+.mcq-options{display:flex;flex-direction:column;gap:9px;}
+.mcq-option{background:var(--badge);border:2px solid transparent;border-radius:12px;padding:11px 15px;cursor:pointer;font-size:14px;font-weight:600;text-align:left;transition:all .15s;color:var(--text);}
+.mcq-option:hover:not(.disabled){border-color:var(--sl);background:rgba(82,183,136,.1);}
+.mcq-option.correct{border-color:#2d6a4f;background:#c8f0dc;color:#1a3d2a;}
+.mcq-option.wrong{border-color:#e05252;background:#fde8e8;color:#7a1515;}
+.mcq-option.disabled{cursor:default;}
+@media(prefers-color-scheme:dark){.mcq-option.correct{background:#1a3d2a;color:#a8ffd0;}.mcq-option.wrong{background:#3d1a1a;color:#ffaaaa;}}
+.frq-textarea{width:100%;border:2px solid var(--sl);border-radius:12px;padding:11px 13px;font-size:14px;font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);resize:vertical;min-height:95px;outline:none;transition:border-color .15s;}
+.frq-textarea:focus{border-color:var(--gold);}
+.frq-note{font-size:11px;color:var(--muted);margin-top:5px;}
+.action-row{display:flex;gap:10px;margin-top:14px;}
+.btn{border:none;border-radius:12px;padding:11px 22px;font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;cursor:pointer;transition:all .15s;flex:1;}
+.btn-primary{background:var(--sg);color:white;}.btn-primary:hover{background:var(--sl);}
+.btn-primary:disabled{opacity:.5;cursor:not-allowed;}
+.btn-secondary{background:var(--badge);color:var(--muted);}
+.feedback-box{border-radius:14px;padding:14px;margin-top:12px;font-size:14px;line-height:1.6;}
+.feedback-correct{background:#c8f0dc;color:#1a3d2a;border-left:4px solid #2d6a4f;}
+.feedback-wrong{background:#fde8e8;color:#7a1515;border-left:4px solid #e05252;}
+.feedback-ai{background:#fff8e1;color:#5a3a00;border-left:4px solid var(--gold);}
+@media(prefers-color-scheme:dark){.feedback-correct{background:#1a3d2a;color:#a8ffd0;}.feedback-wrong{background:#3d1a1a;color:#ffaaaa;}.feedback-ai{background:#2a2000;color:#ffe08a;}}
+.feedback-label{font-weight:800;font-size:14px;margin-bottom:5px;}
+.loading-dots span{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--gold);margin:0 2px;animation:dot-bounce 1s infinite ease-in-out;}
+.loading-dots span:nth-child(2){animation-delay:.15s;}.loading-dots span:nth-child(3){animation-delay:.30s;}
+@keyframes dot-bounce{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-8px)}}
+.xp-pop{position:fixed;top:60px;right:24px;z-index:999;background:var(--gold);color:#1a2e22;border-radius:20px;padding:8px 18px;font-family:'Fredoka One';font-size:20px;pointer-events:none;animation:xp-float 1.8s ease-out forwards;}
+@keyframes xp-float{0%{opacity:1;transform:translateY(0)}70%{opacity:1;transform:translateY(-30px)}100%{opacity:0;transform:translateY(-50px)}}
+.results-card{background:var(--card);border-radius:24px;padding:28px 22px;text-align:center;box-shadow:0 4px 24px rgba(0,0,0,.1);}
+.results-icon{font-size:64px;margin-bottom:10px;}
+.results-title{font-family:'Fredoka One';font-size:28px;margin-bottom:6px;}
+.results-sub{font-size:14px;color:var(--muted);margin-bottom:20px;}
+.score-ring{width:110px;height:110px;border-radius:50%;border:8px solid var(--sg);margin:0 auto 18px;display:flex;align-items:center;justify-content:center;flex-direction:column;}
+.score-num{font-family:'Fredoka One';font-size:30px;color:var(--sg);}
+.score-denom{font-size:12px;color:var(--muted);}
+.stat-row{display:flex;justify-content:center;gap:20px;margin-bottom:20px;}
+.stat-box{text-align:center;}.stat-val{font-family:'Fredoka One';font-size:22px;color:var(--gold);}.stat-lbl{font-size:11px;color:var(--muted);}
+.achievement-toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--sg);color:white;border-radius:20px;padding:12px 24px;font-size:14px;font-weight:700;z-index:999;transition:transform .4s cubic-bezier(.34,1.56,.64,1);display:flex;align-items:center;gap:8px;white-space:nowrap;}
+.achievement-toast.show{transform:translateX(-50%) translateY(0);}
+.timer-bar-wrap{height:6px;background:rgba(0,0,0,.1);border-radius:4px;margin-bottom:14px;overflow:hidden;}
+.timer-bar{height:100%;border-radius:4px;background:var(--sky);transition:width 1s linear;}
+.timer-bar.warning{background:var(--gold);}.timer-bar.danger{background:var(--red);}
+@media(max-width:480px){.category-grid{grid-template-columns:1fr 1fr;}.q-text{font-size:14px;}}
 </style>
 </head>
 <body>
@@ -259,487 +98,352 @@ h1, h2, .display {
     </div>
   </div>
   <div class="progress-wrap">
-    <div class="progress-label">
-      <span>OVERALL PROGRESS</span>
-      <span id="progress-pct">0%</span>
-    </div>
+    <div class="progress-label"><span>OVERALL PROGRESS</span><span id="progress-pct">0%</span></div>
     <div class="progress-track"><div class="progress-fill" id="main-progress" style="width:0%"></div></div>
   </div>
   <div id="root"></div>
 </div>
-
 <div class="achievement-toast" id="achievement-toast"></div>
-
 <script>
 const DATA = {
   categories: [
     {
-      id: 'camping',
-      name: 'Camping & Cooking',
-      icon: '🏕️',
-      color: '#2d6a4f',
-      questions: [
-        { type: 'mcq', q: 'What is the Leave No Trace principle about campfires?', options: ['Always build a large fire for warmth', 'Use existing fire rings; keep fires small; put out completely', 'Bury ash to help the soil', 'Build fires only on rocks'], answer: 1, explanation: 'LNT fire principles: use existing rings, keep fires small, and ensure fires are completely extinguished with water—not just dirt.', points: 20 },
-        { type: 'mcq', q: 'Which knot is best for joining two ropes of different diameters?', options: ['Square knot', 'Sheet bend', 'Bowline', 'Clove hitch'], answer: 1, explanation: 'The sheet bend is designed to join two ropes of different thicknesses. A square knot can slip when used with unequal diameter ropes.', points: 20 },
-        { type: 'frq', q: 'Describe how to properly set up a tent in a rainy environment. Include site selection, setup steps, and rain protection.', hint: 'Think about ground water, wind direction, and tent seams', rubric: 'Look for: sloped or elevated ground, rainfly first, seam sealing, ventilation to prevent condensation, door facing away from wind', points: 40 },
-        { type: 'mcq', q: 'What temperature must ground beef reach to be safely cooked at camp?', options: ['145°F (63°C)', '155°F (68°C)', '160°F (71°C)', '165°F (74°C)'], answer: 2, explanation: '160°F (71°C) is the safe internal temperature for ground beef. Use a meat thermometer—color alone is not reliable.', points: 20 },
-        { type: 'frq', q: 'Explain the STOP acronym used when someone is lost in the wilderness. What does each letter mean, and why is it important?', hint: 'Each letter is an action step', rubric: 'S=Stop, T=Think, O=Observe, P=Plan. This prevents panic, conserves energy, and helps rescuers find you. Extra points for explaining WHY each step matters.', points: 40 },
-        { type: 'mcq', q: 'Which type of stove fuel is MOST eco-friendly for backcountry camping?', options: ['White gas (liquid fuel)', 'Propane canister', 'Alcohol stove (denatured alcohol)', 'Wood-burning rocket stove'], answer: 2, explanation: 'Alcohol stoves use clean-burning denatured alcohol and leave no canister waste. In low-impact areas, they minimize fuel residue.', points: 20 }
+      id:'camping', name:'Camping & Outdoor Ethics', icon:'🏕️', req:'Req 1 & 2',
+      questions:[
+        {type:'mcq',q:'Requirement 1a says you need how many separate troop/patrol activities since joining Scouts BSA?',options:['5 activities','8 activities','10 activities','12 activities'],answer:2,explanation:'Requirement 1a: 10 separate troop/patrol activities, at least 6 outdoors, and at least 3 of those outdoor activities must include overnight camping.',points:20},
+        {type:'mcq',q:'On campouts (Req 1a), where must you sleep?',options:['Any indoor shelter is fine','A tent you pitch or structure you help erect (lean-to, snow cave, tepee)','A cabin provided by the camp','Your car if weather is bad'],answer:1,explanation:'Req 1a specifically states you must spend the night in a tent you pitch OR another structure you help erect—like a lean-to, snow cave, or tepee.',points:20},
+        {type:'frq',q:'Explain the potential impacts of camping on the environment AND on other outdoor users (Req 1b). Why are the Outdoor Code and Leave No Trace principles important?',hint:'Think: soil compaction, wildlife disturbance, water pollution, noise, trail widening',rubric:'Environment impacts: soil compaction, vegetation damage, water pollution, wildlife disturbance, fire scars. Other users: noise, crowding, trail damage, littering. LNT/Outdoor Code: preserve wild places for future generations, maintain ecosystems, ensure everyone can enjoy nature. Strong answers give specific examples.',points:40},
+        {type:'mcq',q:'When planning a campout menu (Req 2a), at least how many meals must require cooking?',options:['One meal','Two meals','All three meals','No requirement'],answer:1,explanation:'Req 2a: your menu must include at least one breakfast, one lunch, and one dinner, and require cooking at least TWO of the meals.',points:20},
+        {type:'mcq',q:'Req 2d covers safe food handling. Which of these is the correct way to store raw meat at camp?',options:['In an open container near the fire for easy access','Sealed, at the bottom of the cooler away from ready-to-eat foods','Wrapped in a cloth and hung from a tree','At room temperature if the campout is under 4 hours'],answer:1,explanation:'Raw meats should be stored sealed and at the bottom of the cooler to prevent cross-contamination drips onto other food. Keep coolers below 40°F.',points:25},
+        {type:'frq',q:'You are the cook for your patrol (Req 2e). Describe how you would supervise building a safe cooking fire AND safely dispose of all camp waste including garbage, cans, waste water, and food scraps.',hint:'Think: fire safety, LNT disposal rules, water 200 feet from water sources',rubric:'Fire: clear area, proper site, water nearby, supervise assistants, extinguish completely. Waste: pack out all trash including cans, strain waste water and pack out food bits, disperse 200ft from water/camp/trail, burn paper if allowed. Bonus: grease disposal, food storage against wildlife.',points:45},
       ]
     },
     {
-      id: 'navigation',
-      name: 'Navigation & Maps',
-      icon: '🧭',
-      color: '#4da8da',
-      questions: [
-        { type: 'mcq', q: 'Magnetic declination is the difference between which two things?', options: ['True North and Map North', 'True North and Magnetic North', 'Grid North and Map North', 'Compass bearing and True bearing'], answer: 1, explanation: 'Magnetic declination is the angle between True North (geographic) and Magnetic North (where a compass points). This varies by location and changes over time.', points: 20 },
-        { type: 'mcq', q: 'On a topographic map, contour lines that are CLOSER together indicate:', options: ['Flatter terrain', 'Steeper terrain', 'A valley', 'A ridgeline'], answer: 1, explanation: 'Closely spaced contour lines mean elevation changes rapidly over a short distance—indicating steep terrain. Widely spaced lines = gentle slopes.', points: 20 },
-        { type: 'frq', q: 'You are at a hilltop using a topographic map and compass. Describe step-by-step how you would take a bearing to a distant landmark and then navigate to it.', hint: 'Include how to use both the compass AND the map together', rubric: 'Should include: identify landmark on map, draw line from position to landmark, measure bearing with protractor/compass, adjust for declination, sight compass toward bearing in field, pick intermediate targets, periodic checks', points: 40 },
-        { type: 'mcq', q: 'What does a blue contour line on a topographic map typically represent?', options: ['Water features (rivers, lakes)', 'Elevation benchmarks', 'Trails and roads', 'Vegetation boundaries'], answer: 0, explanation: 'Blue contour lines or features on topo maps indicate water—rivers, streams, lakes, swamps, and seasonal water bodies.', points: 20 },
-        { type: 'mcq', q: 'You need to travel 3 miles with a pace count of 65 paces per 100 yards. Approximately how many pace counts is that?', options: ['1,040 paces', '2,080 paces', '3,120 paces', '5,280 paces'], answer: 1, explanation: '3 miles = 5,280 yards. At 65 paces per 100 yards: (5,280 / 100) × 65 = 3,432 individual steps, or about 1,716 double-paces. Best answer is 2,080 based on standard rounding.', points: 25 },
-        { type: 'frq', q: 'What are the 5 major terrain features you can identify on a topographic map? Describe each one briefly.', hint: 'Think: hill, ridge, valley, saddle, and depression', rubric: 'Hill (circular contours, closed/summit), Ridge (elongated high ground), Valley (V or U shaped, points uphill), Saddle/Col (low point between two heights), Depression (closed contours with hachure marks)', points: 40 }
+      id:'tools', name:'Tools & Lashings', icon:'🪢', req:'Req 3',
+      questions:[
+        {type:'mcq',q:'According to Req 3a, which situation is the BEST reason to use lashings?',options:['When you want to practice knots for fun','When you need to join poles to make a useful camp structure','When rope is the only thing available','When nails are not allowed in your tent'],answer:1,explanation:'Lashings are used to join poles or staves together to create useful camp structures and gadgets. You should NOT use lashings when the structure needs to bear heavy loads that require hardware.',points:20},
+        {type:'mcq',q:'The timber hitch is most useful for:',options:['Joining two ropes together','Starting a lashing or dragging a log','Securing a line to a fixed anchor permanently','Tying two poles side by side'],answer:1,explanation:'The timber hitch is ideal for starting lashings and for dragging or hoisting logs. It tightens under load and releases easily when the load is removed.',points:20},
+        {type:'mcq',q:'What is a clove hitch best used for?',options:['Joining two ropes of different sizes','Starting or finishing a lashing on a pole','Tying a boat to a dock permanently','Making a loop that does not slip'],answer:1,explanation:'The clove hitch is the go-to knot for starting and finishing lashings. It grips a pole securely and is quick to tie and untie.',points:20},
+        {type:'mcq',q:'A square lashing is used to join two poles at approximately what angle?',options:['Any angle works','At a 45-degree angle only','At roughly a right angle (90°)','Only parallel to each other'],answer:2,explanation:'Square lashings join two poles at right angles (90°). For poles at other angles, use a diagonal lashing. For two parallel poles side by side, use a shear lashing.',points:20},
+        {type:'frq',q:'Describe the difference between a square lashing, a shear lashing, and a diagonal lashing (Req 3c). When would you use each one? Give an example of a camp gadget you could build using each type.',hint:'Think about the angle of the poles being joined',rubric:'Square: 90-degree joins, use for camp table/tower legs. Shear: parallel poles lashed side by side then spread (A-frame, tripod), can be opened like scissors. Diagonal: poles crossing at odd angles, good for X-braces. Examples: camp table, flagpole, gear rack, clothesline support. Should correctly distinguish all three.',points:45},
+        {type:'frq',q:'Design a useful camp gadget or structure (Req 3d) that uses at least two types of lashings. Draw or describe it, name each lashing used, and explain why it would be useful at camp.',hint:'Ideas: pot hanger, camp table, gear rack, flagpole, wash station',rubric:'Should name a practical camp item, correctly identify at least 2 lashing types needed, explain how the lashings hold it together, and give a clear reason why it would be useful. Bonus for safety considerations or material requirements.',points:40},
       ]
     },
     {
-      id: 'firstaid',
-      name: 'First Aid',
-      icon: '🩹',
-      color: '#e05252',
-      questions: [
-        { type: 'mcq', q: 'For an unconscious choking victim, what should you do after calling 911?', options: ['Perform back blows only', 'Start CPR — chest compressions may dislodge the object', 'Use the Heimlich maneuver', 'Place them in recovery position'], answer: 1, explanation: 'For an unconscious choking victim, begin CPR. Chest compressions can create enough pressure to dislodge the obstruction. Look in the mouth before each rescue breath.', points: 25 },
-        { type: 'frq', q: 'A hiker collapses and is unresponsive. Walk through your complete response using the BSA emergency response order. What do you do first, second, and so on?', hint: 'Remember: scene safety first, then assess the person', rubric: 'Correct order: 1) Ensure scene safety, 2) Check responsiveness, 3) Call for help/911, 4) Check ABCs (Airway/Breathing/Circulation), 5) Begin CPR if needed, 6) AED if available, 7) Continue until EMS arrives, 8) Don\'t move if spinal injury suspected', points: 50 },
-        { type: 'mcq', q: 'What is the correct compression-to-breath ratio for adult CPR (single rescuer)?', options: ['15:2', '30:2', '30:1', '5:1'], answer: 1, explanation: 'Current AHA/Red Cross guidelines specify 30 chest compressions followed by 2 rescue breaths for adult CPR with one rescuer. Compressions should be 2–2.4 inches deep at 100–120 per minute.', points: 25 },
-        { type: 'mcq', q: 'To treat a severe bleed that cannot be controlled with direct pressure, what should you apply?', options: ['Ice pack', 'Tourniquet 2–3 inches above the wound', 'Pressure bandage only', 'Tourniquet directly on the wound'], answer: 1, explanation: 'A tourniquet should be applied 2–3 inches above the wound (proximal to it), tightened until bleeding stops, and the time noted. Never place it over a joint.', points: 25 },
-        { type: 'frq', q: 'Describe how to recognize and treat heat exhaustion vs. heat stroke. What is the KEY difference in treatment?', hint: 'One is life-threatening; the other can be treated in the field', rubric: 'Heat exhaustion: heavy sweating, pale/moist skin, weakness, nausea, normal/slightly elevated temp — treat by cooling, rest, fluids, shade. Heat stroke: HOT DRY skin, confusion, no sweating, temp >104°F — CALL 911 IMMEDIATELY, aggressive cooling (ice bath preferred), this is a life-threatening emergency', points: 45 },
-        { type: 'mcq', q: 'RICE stands for the treatment of sprains. What does RICE mean?', options: ['Rest, Ice, Compression, Elevation', 'Run, Inspect, Cold pack, Elevation', 'Rest, Immobilize, Cold, Exercise', 'Rest, Ice, Clean, Elevate'], answer: 0, explanation: 'RICE: Rest (stop activity), Ice (15-20 min intervals), Compression (wrap to reduce swelling), Elevation (raise above heart level). This reduces pain and swelling for sprains and strains.', points: 20 }
+      id:'navigation', name:'Navigation & Maps', icon:'🧭', req:'Req 4',
+      questions:[
+        {type:'mcq',q:'Requirement 4a says an orienteering course must cover at least how far?',options:['Half a mile','One mile','Two miles','Five kilometers'],answer:1,explanation:'Req 4a: the orienteering course must cover at least one mile AND require measuring the height and/or width of designated items like trees, towers, canyons, or ditches.',points:20},
+        {type:'frq',q:'Describe how you would use a handheld GPS unit or smartphone GPS app to complete Req 4b: find your current location, choose a destination, and navigate to it.',hint:'Include what GPS data you would look at and how you would follow the route',rubric:'Should include: turning on GPS and waiting for signal lock, reading coordinates or map position, entering or selecting a destination, reading distance/bearing or following map route, checking progress along the way. Bonus for mentioning backup compass/map navigation in case battery dies.',points:40},
+        {type:'mcq',q:'Magnetic declination is the difference between True North and Magnetic North. In the western U.S., a compass needle typically points:',options:['East of True North','Exactly at True North','West of True North','South of True North'],answer:2,explanation:'In most of the western United States, magnetic declination is EAST—meaning a compass needle points west of True North. In the eastern U.S., it points east of True North. Always check the declination for your specific location.',points:25},
+        {type:'mcq',q:'To measure the HEIGHT of a tall tree using map and compass skills, which method works best?',options:['Climb halfway and multiply','Use the 45-degree angle method: walk back until you sight the top at 45°—that distance equals the height','Count the rings at the base','Use triangulation with two compasses'],answer:1,explanation:'The 45-degree method: stand back until you look up at exactly 45° to the treetop. Your distance from the tree equals the tree\'s height (plus your eye level). This is required in Req 4a orienteering courses.',points:25},
+        {type:'mcq',q:'On a topographic map, a closed contour line with hachure marks (short lines pointing inward) indicates:',options:['A hilltop','A depression (hole) in the ground','A cliff face','The edge of a lake'],answer:1,explanation:'Hachure marks on closed contour lines indicate a depression—a hollow or low spot like a crater, sinkhole, or bowl. Without hachures, a closed contour means a hilltop.',points:25},
+        {type:'frq',q:'You are on an orienteering course (Req 4a) and need to measure the WIDTH of a river you cannot cross. Describe a method to estimate the width using only a compass and your knowledge of geometry or pace count.',hint:'Think about creating a right triangle on the near bank',rubric:'Valid methods include: 1) Pick a landmark across the river, walk perpendicular along bank a measured distance, take two bearings to the landmark, use math/geometry to find width. 2) Right-angle triangle method: mark spot A on far bank, walk along near bank, use 90-degree angles and measured baseline. Should describe the steps clearly even if math isn\'t perfect.',points:45},
       ]
     },
     {
-      id: 'citizenship',
-      name: 'Citizenship & Scout Law',
-      icon: '🤝',
-      color: '#e9a61a',
-      questions: [
-        { type: 'mcq', q: 'The Scout Law has how many points?', options: ['10 points', '11 points', '12 points', '14 points'], answer: 2, explanation: 'The Scout Law has 12 points: Trustworthy, Loyal, Helpful, Friendly, Courteous, Kind, Obedient, Cheerful, Thrifty, Brave, Clean, and Reverent.', points: 15 },
-        { type: 'frq', q: 'Choose THREE points of the Scout Law and explain how you have personally demonstrated each one in your life. Give specific examples.', hint: 'The more specific your examples, the better!', rubric: 'Should name exactly 3 Scout Law points correctly, provide specific real-world personal examples (not generic), and show understanding of why each matters. Extra credit for connecting to citizenship or community impact.', points: 50 },
-        { type: 'mcq', q: 'The Scout Oath says "to help other people at all times." This BEST describes which principle?', options: ['Duty to God and country', 'Physical strength', 'Duty to other people', 'Mental awakefulness'], answer: 2, explanation: 'The Scout Oath has three duties: Duty to God and Country, Duty to Other People (service/helpfulness), and Duty to Self (physically strong, mentally awake, morally straight).', points: 20 },
-        { type: 'frq', q: 'What is the difference between a democracy and a republic? Why does the BSA emphasize good citizenship?', hint: 'Think about representation and voting', rubric: 'Democracy=direct rule by majority vote; Republic=elected representatives govern. BSA emphasizes citizenship because scouts develop leadership, community service, and civic responsibility. Should mention that good citizens participate in government, volunteer, and uphold laws.', points: 40 },
-        { type: 'mcq', q: 'Which of these is NOT part of the Scout Oath?', options: ['"to keep myself physically strong"', '"to be prepared for any challenge"', '"mentally awake"', '"morally straight"'], answer: 1, explanation: '"Be Prepared" is the Scout Motto, not the Scout Oath. The Oath focuses on duty to God/country, others, and self (physically strong, mentally awake, morally straight).', points: 20 },
-        { type: 'mcq', q: 'A Scout is "Thrifty." This BEST means:', options: ['Being stingy with money', 'Saving and wisely managing resources', 'Never spending money', 'Only buying outdoor gear'], answer: 1, explanation: 'Thrifty means responsible management of resources—money, time, and natural resources. It\'s about wise stewardship, not just being cheap. This includes not wasting and being environmentally responsible.', points: 20 }
+      id:'nature', name:'Nature & Weather', icon:'🌿', req:'Req 5',
+      questions:[
+        {type:'mcq',q:'Req 5a requires identifying at least how many kinds of native plants in your local area?',options:['5 plants','8 plants','10 plants','15 plants'],answer:2,explanation:'Req 5a: identify or show evidence of at least 10 kinds of NATIVE plants in your local area or campsite. Evidence can include fallen leaves, fruit, or photographs.',points:15},
+        {type:'mcq',q:'Requirement 5b says to identify two ways to get a weather forecast. Which pair BOTH count as valid methods?',options:['Asking a friend and guessing','National Weather Service website and a NOAA weather radio','Looking at clouds and feeling the wind','TV only and newspaper only'],answer:1,explanation:'Valid forecasting methods include: NOAA weather radio, National Weather Service website (weather.gov), smartphone weather apps, and TV/radio weather. The key is using official, reliable forecasting sources—not personal observation alone.',points:20},
+        {type:'frq',q:'Describe at least THREE natural indicators of impending hazardous weather (Req 5c), the dangerous events they may signal, and the appropriate action to take for each.',hint:'Think: cloud types, wind changes, animal behavior, pressure drops, sky color',rubric:'Should name 3+ valid indicators: rapidly building cumulonimbus clouds (thunderstorm→seek shelter), sudden wind shift/drop (tornado→low ground shelter), ring around moon/sun (moisture incoming→prepare for rain), falling barometer (storm→delay trip), dark green sky (hail/tornado→immediate shelter), animals going quiet/moving (storm→take cover). Must match indicator to danger AND action.',points:45},
+        {type:'frq',q:'Req 5d: Describe the extreme weather conditions common in YOUR local geographic area. How would you determine the risk ahead of time, plan to avoid danger, and respond if caught in that weather?',hint:'Sammamish, WA area: think heavy rain, flooding, windstorms, occasional snow/ice',rubric:'Should identify at least 2 local weather hazards (e.g., Pacific Northwest: heavy rain/flooding, wind storms, hypothermia risk, rare but dangerous snow/ice). Risk assessment: check NOAA, local alerts, seasonal patterns. Avoidance: flexible itinerary, gear for rain, early turnaround. Response: shelter, emergency gear, communication plan. Bonus for mentioning specific local rivers, trails, or mountain hazards.',points:45},
+        {type:'mcq',q:'Which cloud type is most likely to produce prolonged, steady rain over a wide area?',options:['Cirrus','Cumulus','Nimbostratus','Cumulonimbus'],answer:2,explanation:'Nimbostratus clouds are dark, low-lying layer clouds that produce steady, prolonged precipitation over large areas. Cumulonimbus produce short, intense thunderstorms. Cirrus = high ice crystals = no precipitation.',points:20},
+        {type:'mcq',q:'A sudden drop in temperature combined with a rapid shift in wind direction usually signals:',options:['Clearing skies ahead','A cold front passing through','High pressure building','Sea breeze developing'],answer:1,explanation:'A rapid temperature drop plus wind shift (often from south/southwest to northwest) is the classic signature of a cold front. This can bring sudden storms, hail, or severe weather. It\'s one of the most important natural weather indicators.',points:25},
       ]
     },
     {
-      id: 'nature',
-      name: 'Nature & Environment',
-      icon: '🌿',
-      color: '#52b788',
-      questions: [
-        { type: 'mcq', q: 'Which clouds are most associated with thunderstorms?', options: ['Cirrus clouds', 'Stratus clouds', 'Cumulonimbus clouds', 'Altocumulus clouds'], answer: 2, explanation: 'Cumulonimbus (Cb) clouds are the "king" of storm clouds. They can tower 40,000+ feet and produce lightning, heavy rain, hail, and tornadoes. Their anvil-shaped top is a key identifier.', points: 20 },
-        { type: 'frq', q: 'Explain the water cycle using at least four scientific terms. How do human activities impact this cycle?', hint: 'evaporation, condensation, precipitation, transpiration, runoff', rubric: 'Must use 4+ accurate terms (evaporation, condensation, precipitation, transpiration, infiltration, runoff, etc.) and correctly sequence the cycle. Human impacts should include: pollution, deforestation (reducing transpiration), impervious surfaces (increasing runoff), climate change (altering precipitation patterns)', points: 45 },
-        { type: 'mcq', q: 'What does "endemic" mean when describing a plant or animal species?', options: ['The species is endangered', 'The species is native to one specific geographic area', 'The species migrates seasonally', 'The species was introduced by humans'], answer: 1, explanation: 'Endemic means a species is found ONLY in a specific geographic area and nowhere else on Earth naturally. For example, the California condor is endemic to North America, while lemurs are endemic to Madagascar.', points: 25 },
-        { type: 'mcq', q: 'The "30/30 rule" for lightning safety states you should seek shelter if lightning is within how many miles?', options: ['5 miles', '6 miles', '10 miles', '15 miles'], answer: 2, explanation: 'The 30/30 rule: if thunder follows lightning in less than 30 seconds, the storm is within 6 miles—seek shelter. Stay inside for 30 minutes after the last thunder clap.', points: 20 },
-        { type: 'frq', q: 'You observe an unfamiliar mushroom in the woods. A friend wants to eat it. What do you tell them? What are the rules about eating wild plants and fungi?', hint: 'Safety first—when in doubt, leave it out', rubric: 'Should firmly advise against it. Key points: never eat unidentified fungi, misidentification can be fatal (death cap mushroom), identification requires expert knowledge not just a photo, even edible lookalikes exist. Best practice: only eat wild food confirmed by an expert. Extra points for naming a dangerous mushroom or toxin.', points: 40 },
-        { type: 'mcq', q: 'Which practice BEST helps prevent the spread of invasive plant species?', options: ['Burning invasive plants', 'Cleaning boots/gear before entering new wilderness areas', 'Only hiking in areas with native plants', 'Avoiding all plants on trail'], answer: 1, explanation: 'Cleaning gear, boots, and clothing before entering new areas prevents transporting invasive plant seeds. Many invasive species spread via seeds stuck to gear, pets, and vehicles.', points: 20 }
+      id:'aquatics', name:'Aquatics & Water Safety', icon:'🏊', req:'Req 6',
+      questions:[
+        {type:'mcq',q:'The BSA Swimmer test requires swimming how far continuously?',options:['50 yards','75 yards','100 yards','200 yards'],answer:2,explanation:'The BSA Swimmer qualification requires continuously swimming 100 yards in a strong manner using one or more recognized strokes (crawl, sidestroke, breaststroke, or trudgen).',points:20},
+        {type:'mcq',q:'Which of these is NOT one of the required BSA Safe Afloat precautions (Req 6b)?',options:['Qualified supervision by a BSA-trained adult','Everyone must wear a personal flotation device (PFD)','Always travel in groups of at least 6 boats','File a float plan before departure'],answer:2,explanation:'BSA Safe Afloat does NOT require groups of 6 boats. The requirements include: qualified supervision, buddy system, PFDs, swim checks, safety equipment, and a float plan. Traveling in large groups is good practice but not a specific requirement.',points:25},
+        {type:'mcq',q:'The bow of a canoe refers to:',options:['The back (stern) end','The front end','The left side (port)','The bottom hull'],answer:1,explanation:'Bow = front. Stern = back. Port = left. Starboard = right. Gunwale = top edge. Thwart = crossbar brace. Hull = bottom. Knowing these terms is required under Req 6c.',points:20},
+        {type:'mcq',q:'For proper body positioning in a canoe (Req 6d), paddlers should:',options:['Stand for better visibility','Sit or kneel low with weight centered to keep the center of gravity low','Lean over the side to reach the water better','Move freely to distribute weight evenly at all times'],answer:1,explanation:'Sitting or kneeling low keeps your center of gravity low, which improves stability. Leaning over the side or standing dramatically raises the risk of capsizing—especially in moving water.',points:20},
+        {type:'frq',q:'Explain how to perform a line rescue (Req 6e). What is the role of the TENDER and the role of the RESCUER? Why is a line rescue safer than a swimming rescue?',hint:'The victim is about 30 feet from shore in deep water',rubric:'Tender: holds the end of the rope on shore, manages slack, guides/pulls the rescuer back in. Rescuer: throws the rope to the victim, OR swims out holding the line while tender manages it, reaches victim, holds them while tender pulls both in. Safer than swimming rescue: rescuer doesn\'t risk drowning trying to tow a panicking victim, tender maintains control, victim can be pulled in quickly. Should mention calling for help/911 first.',points:45},
+        {type:'frq',q:'What are the key precautions for a safe trip afloat (Req 6b)? List and explain at least FIVE safety measures.',hint:'Think: supervision, PFDs, buddy system, float plan, swim check, weather',rubric:'Should include 5 of: qualified adult supervision, everyone takes swim check (swimmers vs non-swimmers), PFDs worn by all, buddy system, no alcohol, obey capacity limits, check weather, have float plan, carry safety equipment (whistle, throw bag), stay together, know waterway rules. Each item should have a brief explanation of WHY it matters.',points:40},
       ]
     },
     {
-      id: 'leadership',
-      name: 'Leadership & Service',
-      icon: '⭐',
-      color: '#8b5e3c',
-      questions: [
-        { type: 'mcq', q: 'In Scouting, what is the PRIMARY purpose of the patrol method?', options: ['To divide workload evenly', 'To develop youth leadership through small peer groups', 'To keep Scouts organized by age', 'To separate beginners from advanced Scouts'], answer: 1, explanation: 'The patrol method is the cornerstone of Scout training. Small groups of peers elect their own leader, plan activities, and solve problems together—developing real leadership skills through practice.', points: 20 },
-        { type: 'frq', q: 'Describe a situation where you took on a leadership role (at school, Scouts, sports, etc.). What challenges did you face, and what did you learn about leadership?', hint: 'Be specific and honest—challenges make better stories than easy wins!', rubric: 'Should describe a REAL situation, specific challenges faced, actions taken, and genuine reflection on what was learned. High scores for: admitting mistakes, showing growth, connecting to specific Scout leadership principles', points: 50 },
-        { type: 'mcq', q: 'A Scout notices a fellow troop member is being left out and seems sad. According to Scout values, what should they do?', options: ['Mind their own business', 'Tell the Scoutmaster immediately', 'Include the Scout and later report ongoing bullying to leadership', 'Talk loudly so the other Scouts hear and stop'], answer: 2, explanation: 'A Scout is Friendly, Kind, and Helpful. First, include the person directly. If the behavior is bullying or ongoing, report it to adult leadership. Scouts address problems both directly and through proper channels.', points: 25 },
-        { type: 'frq', q: 'Design a community service project that your patrol of 8 Scouts could complete in one weekend. Include: the need it addresses, tasks for each Scout, materials needed, and how you would measure success.', hint: 'Think local—parks, elderly care, food banks, environmental cleanup', rubric: 'Strong projects: address a real local need (not just fun), include specific task assignments, realistic materials list, measurable outcomes (lbs of litter, # served, trees planted). Bonus points for safety planning or considering patrol skill levels.', points: 50 },
-        { type: 'mcq', q: 'What does "servant leadership" mean?', options: ['Leaders do all the physical work', 'Leaders put the needs of their team and community first', 'Leaders earn respect through strict discipline', 'Younger Scouts serve older ones'], answer: 1, explanation: 'Servant leadership prioritizes the growth and well-being of the group over personal power. Scout leadership training emphasizes that a good leader serves their team—empowering others to succeed.', points: 25 },
-        { type: 'mcq', q: 'How many hours of service are typically required for First Class advancement?', options: ['0 hours (not required)', '6 hours', '10 hours', '20 hours'], answer: 0, explanation: 'First Class itself doesn\'t specify a service hour requirement, but Scouts are encouraged to participate in service projects. Service hours become more specific for Star, Life, and Eagle ranks.', points: 20 }
+      id:'firstaid', name:'First Aid & Emergency Prep', icon:'🩹', req:'Req 7',
+      questions:[
+        {type:'mcq',q:'When applying a bandage for a sprained ankle (Req 7a), the figure-eight wrap is used because:',options:['It is the only knot that holds on ankles','It supports the joint while allowing some movement and controls swelling','It is faster than other methods','It works as a tourniquet if bleeding occurs'],answer:1,explanation:'A figure-eight bandage stabilizes the ankle joint, limits the motion that causes pain, and applies compression to reduce swelling. It is NOT a tourniquet—never wrap so tightly you cut off circulation.',points:20},
+        {type:'mcq',q:'The five most common warning signs of a heart attack include chest pain/pressure. Which of these is ALSO a recognized heart attack warning sign (Req 7c)?',options:['Sudden high fever and sweating','Pain radiating to the left arm, jaw, or back','Rapid blinking and confusion only','Sudden hunger and thirst'],answer:1,explanation:'Heart attack warning signs (Req 7c): chest pain/pressure/squeezing, pain radiating to arm/jaw/back/neck, shortness of breath, nausea/vomiting, sudden cold sweats. Call 911 immediately—do not drive yourself.',points:25},
+        {type:'frq',q:'A Scout falls unconscious and stops breathing normally. Walk through the complete CPR procedure (Req 7c), including compression rate, depth, and breath ratio. What do you do first before starting compressions?',hint:'Remember: Call-Push-Breathe, and check for safety first',rubric:'1) Ensure scene safety, 2) Check responsiveness (tap shoulders, shout), 3) Call 911 or send someone, 4) Check for breathing (no more than 10 seconds), 5) Begin chest compressions: heel of hand, center of chest, 2-2.4 inches deep, 100-120/min, 6) After 30 compressions, 2 rescue breaths, 7) Continue 30:2 until AED arrives or EMS takes over. Bonus: mention AED use, recovery position if breathing resumes.',points:50},
+        {type:'mcq',q:'Req 7f: Which of these methods can make water potable (safe to drink) in an emergency?',options:['Letting it sit for one hour','Boiling for 1 minute (3 minutes above 6,500 ft elevation)','Adding soil to filter it','Freezing and thawing it'],answer:1,explanation:'Boiling is the most reliable method to kill pathogens. Boil for 1 full minute at most elevations (3 minutes above 6,500 ft). Chemical tablets (iodine/chlorine) and filters also work. Letting water sit, freezing, or adding soil does NOT make water safe.',points:25},
+        {type:'frq',q:'Develop a home emergency action plan (Req 7e) that covers what to do in case of: (1) fire, (2) severe storm, (3) power outage, and (4) water outage.',hint:'Think: escape routes, meeting spots, emergency contacts, supply kits',rubric:'Fire: two escape routes per room, meet at designated outdoor spot, call 911 from outside, never re-enter. Storm: shelter in interior room/basement, away from windows, emergency kit ready. Power outage: flashlights/candles safely, don\'t open fridge, generator safety outdoors only, check on neighbors. Water outage: stored water (1 gal/person/day), boil notice procedures, use stored water for sanitation. Bonus: 72-hour emergency kit contents.',points:45},
+        {type:'frq',q:'Describe how to transport a person from a smoke-filled room (Req 7b). Then describe how to transport someone with a sprained ankle at least 25 yards.',hint:'Low crawl for smoke; for ankle think human crutch or two-person carry',rubric:'Smoke room: stay low (crawl—smoke rises), feel doors before opening, cover mouth/nose, use quickest safe exit, drag person face-up below smoke if they can\'t walk. Sprained ankle transport: human crutch (support injured side, Scout acts as crutch), two-person carry (arms around shoulders), or improvised stretcher for 25+ yards. Should mention NOT carrying on back in smoke room due to raising victim into smoke layer.',points:40},
       ]
-    }
+    },
+    {
+      id:'citizenship', name:'Citizenship & Scout Spirit', icon:'🤝', req:'Req 9 & 11',
+      questions:[
+        {type:'mcq',q:'Req 9d requires how many hours of service for First Class advancement?',options:['1 hour','3 hours','5 hours','10 hours'],answer:1,explanation:'Req 9d: participate in at least THREE hours of service through one or more Scoutmaster-approved projects. These must be DIFFERENT projects from those used for Tenderfoot and Second Class.',points:20},
+        {type:'frq',q:'Req 9b: Investigate an environmental issue affecting your community. Describe the issue, what you learned, and what YOU or your community could do to address it.',hint:'Think local: water quality, air pollution, invasive species, deforestation, plastic waste',rubric:'Should name a REAL local issue (not generic), include at least 3 specific facts about the problem, and propose at least 2 concrete actions (personal + community level). Strong answers connect the issue to Scout citizenship and environmental stewardship principles.',points:45},
+        {type:'mcq',q:'Req 9c asks you to reduce waste on outings. Which approach BEST demonstrates the reduce-recycle-repurpose principle?',options:['Using disposable plates and burning them at camp','Switching to reusable containers, buying only what you need, and packing out all trash','Buying biodegradable plastic bags instead of regular ones','Leaving organic waste in the woods since it decomposes'],answer:1,explanation:'Req 9c wants you to actively compare your waste before and after. Reusable containers, buying only needed amounts, and packing out everything demonstrates all three: reducing (less packaging), reusing (containers), and repurposing (using leftovers creatively).',points:25},
+        {type:'frq',q:'Req 11: Tell how you have done your duty to God and lived FOUR different points of the Scout Law in your everyday life (must be different from points used for previous ranks).',hint:'The 12 points: Trustworthy, Loyal, Helpful, Friendly, Courteous, Kind, Obedient, Cheerful, Thrifty, Brave, Clean, Reverent',rubric:'Should name all 4 Scout Law points correctly, provide specific personal examples of each (not generic statements), and include a genuine reflection on duty to God (any faith tradition counts). High scores for specific situations, showing real growth, and connecting Scout values to daily decisions.',points:50},
+        {type:'mcq',q:'Req 9a asks you to discuss constitutional rights with an approved individual. Which person would NOT typically be approved for this meeting?',options:['An elected city council member','A local judge','A random stranger you meet online','A high school principal'],answer:2,explanation:'Req 9a requires an "individual approved by your leader"—typically an elected official, judge, attorney, civil servant, principal, or teacher. An unapproved online stranger doesn\'t meet BSA safety guidelines or the intent of the requirement.',points:20},
+        {type:'frq',q:'Req 10 (Leadership): Tell someone eligible to join Scouts BSA about your Scouting activities and invite them to participate. Describe: who you would invite, what you would tell them, and how joining Scouts would benefit them specifically.',hint:'Think about what YOU love about Scouting and what would appeal to that specific person',rubric:'Should identify a specific type of person (friend, neighbor, classmate), include at least 3 genuine personal Scouting highlights, tailor the pitch to what would appeal to THAT person (outdoors? friends? skills? leadership?), include how to actually join (talk to Scoutmaster, BSA website). Bonus for mentioning how to re-engage an inactive Scout.',points:40},
+      ]
+    },
+    {
+      id:'fitness', name:'Fitness & Wellness', icon:'💪', req:'Req 8',
+      questions:[
+        {type:'mcq',q:'Req 8a requires being physically active for how long, how many days per week, for how many weeks?',options:['20 min/day, 3 days/week, 2 weeks','30 min/day, 5 days/week, 4 weeks','60 min/day, 3 days/week, 6 weeks','45 min/day, 4 days/week, 3 weeks'],answer:1,explanation:'Req 8a: be physically active at least 30 minutes each day, 5 days a week, for 4 weeks. You must keep a log of your activities.',points:20},
+        {type:'frq',q:'Req 8b: Share your challenges and successes from your 4-week fitness log. Set a specific goal for continuing physical activity as part of your daily life after Scouting.',hint:'Be honest—everyone has challenges! What strategies helped you stick with it?',rubric:'Should honestly discuss at least 1 challenge (scheduling, motivation, weather) and at least 2 successes, show reflection on what was learned about personal fitness habits. Goal should be SMART: specific activity, realistic frequency, and connected to long-term health. Bonus for explaining WHY the goal matters to them personally.',points:40},
+        {type:'mcq',q:'The USDA MyPlate model (used in Req 2a meal planning) divides a plate into which food groups?',options:['Protein, Carbs, Fat, Vitamins','Fruits, Vegetables, Grains, Protein, and Dairy','Meat, Bread, Milk, and Vegetables','Carbohydrates, Proteins, Fats only'],answer:1,explanation:'MyPlate shows: Fruits, Vegetables, Grains, and Protein as the four plate sections, with Dairy as a side cup. Vegetables and Grains take up the largest portions. This model replaced the old Food Pyramid.',points:20},
+        {type:'mcq',q:'When planning meals for a high-energy backpacking trip (Req 2a), which macronutrient should you INCREASE compared to a normal day?',options:['Only vitamins','Carbohydrates and fats for sustained energy','Protein only','Sugar for quick energy bursts'],answer:1,explanation:'Backpacking burns 3,000-5,000+ calories/day. You need more carbohydrates (quick/sustained energy), fats (high calorie density, critical for cold weather), AND protein (muscle repair). Trail-tested foods like nuts, jerky, and complex carbs are ideal.',points:25},
+        {type:'frq',q:'You are planning a 3-day backpacking menu for 4 Scouts (Req 2a-2b). List one breakfast, one lunch, and one dinner that: meet MyPlate nutrition guidelines, are practical to cook in the backcountry, and stay within a reasonable budget. Estimate food quantities needed.',hint:'Think calorie density, weight, and packability',rubric:'Should name specific meals (not just "sandwiches"), reference at least 3 food groups per day, estimate realistic quantities (approx. 1.5-2 lbs food/person/day for backpacking), consider packability (no glass, minimize weight). Budget awareness: bulk grains/oats cheap, freeze-dried expensive. Bonus for considering dietary restrictions or allergies.',points:45},
+      ]
+    },
   ]
 };
 
-// ─── State ───
-let state = {
-  screen: 'home',
-  xp: 0,
-  streak: 0,
-  totalAnswered: 0,
-  totalCorrect: 0,
-  catProgress: {},
-  catStars: {},
-  currentCat: null,
-  currentQ: 0,
-  answers: [],
-  frqAnswer: '',
-  feedback: null,
-  feedbackLoading: false,
-  quizActive: false,
-  timer: 60,
-  timerInterval: null,
-  quizCorrect: 0
+let state={
+  screen:'home',xp:0,streak:0,totalAnswered:0,totalCorrect:0,
+  catProgress:{},catStars:{},
+  currentCat:null,currentQ:0,answers:[],frqAnswer:'',
+  feedback:null,feedbackLoading:false,timer:60,timerInterval:null,quizCorrect:0
 };
+DATA.categories.forEach(c=>{state.catProgress[c.id]=0;state.catStars[c.id]=0;});
 
-DATA.categories.forEach(c => {
-  state.catProgress[c.id] = 0;
-  state.catStars[c.id] = 0;
-});
+function showXP(amt){const el=document.createElement('div');el.className='xp-pop';el.textContent='+'+amt+' XP';document.body.appendChild(el);setTimeout(()=>el.remove(),2000);}
+function showAchievement(msg){const el=document.getElementById('achievement-toast');el.innerHTML='🏅 '+msg;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),3200);}
 
-// ─── XP Pop ───
-function showXP(amount) {
-  const el = document.createElement('div');
-  el.className = 'xp-pop';
-  el.textContent = '+' + amount + ' XP';
-  document.body.appendChild(el);
-  setTimeout(() => el.remove(), 2000);
+function updateTopBar(){
+  document.getElementById('xp-display').textContent=state.xp;
+  document.getElementById('streak-display').textContent='🔥 '+state.streak;
+  const total=Object.values(state.catProgress).reduce((a,b)=>a+b,0);
+  const max=DATA.categories.reduce((a,c)=>a+c.questions.length,0);
+  const pct=Math.round((total/max)*100);
+  document.getElementById('main-progress').style.width=pct+'%';
+  document.getElementById('progress-pct').textContent=pct+'%';
 }
 
-function showAchievement(msg) {
-  const el = document.getElementById('achievement-toast');
-  el.innerHTML = '🏅 ' + msg;
-  el.classList.add('show');
-  setTimeout(() => el.classList.remove('show'), 3000);
+function startTimer(secs,onEnd){
+  state.timer=secs;clearInterval(state.timerInterval);renderTimerBar();
+  state.timerInterval=setInterval(()=>{
+    state.timer--;renderTimerBar();
+    if(state.timer<=0){clearInterval(state.timerInterval);onEnd();}
+  },1000);
+}
+function stopTimer(){clearInterval(state.timerInterval);}
+function renderTimerBar(){
+  const bar=document.getElementById('timer-bar');if(!bar)return;
+  const pct=(state.timer/state.currentMaxTime)*100;
+  bar.style.width=pct+'%';
+  bar.className='timer-bar'+(pct<20?' danger':pct<40?' warning':'');
 }
 
-function updateTopBar() {
-  document.getElementById('xp-display').textContent = state.xp;
-  document.getElementById('streak-display').textContent = '🔥 ' + state.streak;
-  const total = Object.values(state.catProgress).reduce((a,b)=>a+b,0);
-  const max = DATA.categories.length * 6;
-  const pct = Math.round((total/max)*100);
-  document.getElementById('main-progress').style.width = pct + '%';
-  document.getElementById('progress-pct').textContent = pct + '%';
-}
-
-// ─── Timer ───
-function startTimer(seconds, onEnd) {
-  state.timer = seconds;
-  clearInterval(state.timerInterval);
-  renderTimerBar();
-  state.timerInterval = setInterval(() => {
-    state.timer--;
-    renderTimerBar();
-    if (state.timer <= 0) {
-      clearInterval(state.timerInterval);
-      onEnd();
-    }
-  }, 1000);
-}
-function stopTimer() { clearInterval(state.timerInterval); }
-function renderTimerBar() {
-  const bar = document.getElementById('timer-bar');
-  if (!bar) return;
-  const pct = (state.timer / 60) * 100;
-  bar.style.width = pct + '%';
-  bar.className = 'timer-bar' + (pct < 20 ? ' danger' : pct < 40 ? ' warning' : '');
-}
-
-// ─── AI FRQ Grading ───
-async function gradeFRQ(question, rubric, answer) {
-  const prompt = `You are a Boy Scouts merit badge counselor grading a First Class advancement quiz response.
+async function gradeFRQ(question,rubric,answer){
+  const prompt=`You are a Boy Scouts First Class merit badge counselor grading a rank advancement quiz for a 14-year-old Scout.
 
 Question: "${question}"
 Grading Rubric: ${rubric}
-Student's Answer: "${answer}"
+Scout's Answer: "${answer}"
 
-Grade this response in 3-5 sentences for a 14-year-old Scout. Be encouraging and constructive.
+Give feedback in 3-5 sentences. Be encouraging and constructive for a teen.
 - Start with what they got RIGHT
-- Point out 1-2 things they could add or improve
+- Point out 1-2 specific improvements
 - Give a rating: EXCELLENT / GOOD / NEEDS WORK
-- End with one encouraging sentence
+- End with one encouraging line
 
-Keep your feedback friendly, specific, and under 100 words. Use simple language a teen would enjoy.`;
-
-  try {
-    const resp = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 200,
-        messages: [{ role: 'user', content: prompt }]
-      })
-    });
-    const data = await resp.json();
-    return data.content?.[0]?.text || 'Great effort! Review the hint for more details.';
-  } catch (e) {
-    return 'Great effort on that answer! Compare your response with the key concepts in the hint.';
-  }
+Keep it under 100 words, friendly, and specific.`;
+  try{
+    const resp=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:200,messages:[{role:'user',content:prompt}]})});
+    const data=await resp.json();
+    return data.content?.[0]?.text||'Great effort! Review the rubric hints for more details.';
+  }catch(e){return 'Nice work! Check the hint above to see if you covered all the key points.';}
 }
 
-// ─── Render Functions ───
-function render() {
+function render(){
   updateTopBar();
-  const root = document.getElementById('root');
-  if (state.screen === 'home') root.innerHTML = renderHome();
-  else if (state.screen === 'quiz') root.innerHTML = renderQuiz();
-  else if (state.screen === 'results') root.innerHTML = renderResults();
+  const root=document.getElementById('root');
+  if(state.screen==='home')root.innerHTML=renderHome();
+  else if(state.screen==='quiz')root.innerHTML=renderQuiz();
+  else if(state.screen==='results')root.innerHTML=renderResults();
   attachEvents();
 }
 
-function renderHome() {
-  return `
-    <div class="section-divider">⚜️ CHOOSE YOUR CHALLENGE ⚜️</div>
-    <div style="margin-top:12px" class="category-grid">
-      ${DATA.categories.map(cat => {
-        const prog = state.catProgress[cat.id];
-        const stars = state.catStars[cat.id];
-        return `<div class="cat-card" data-cat="${cat.id}" style="border-color:${prog>0?cat.color:'transparent'}">
-          <div class="cat-icon">${cat.icon}</div>
-          <div class="cat-name">${cat.name}</div>
-          <div class="cat-progress">${prog}/${cat.questions.length} done</div>
-          <div class="cat-stars">
-            ${[1,2,3].map(i=>`<span class="star ${stars>=i?'filled':''}">★</span>`).join('')}
-          </div>
-        </div>`;
-      }).join('')}
-    </div>
-    <div style="margin-top:16px;text-align:center;font-size:12px;color:var(--muted)">
-      ${state.totalAnswered > 0 ? `✅ ${state.totalCorrect}/${state.totalAnswered} correct overall` : 'Start any category to begin your trail to First Class!'}
-    </div>`;
+function renderHome(){
+  const sections=[
+    {label:'⚜️ Core Outdoor Skills',ids:['camping','tools','navigation']},
+    {label:'🌍 Environment & Safety',ids:['nature','aquatics','firstaid']},
+    {label:'🦅 Character & Fitness',ids:['citizenship','fitness']},
+  ];
+  let html='';
+  sections.forEach(sec=>{
+    html+=`<div class="section-label">${sec.label}</div><div class="category-grid">`;
+    sec.ids.forEach(id=>{
+      const cat=DATA.categories.find(c=>c.id===id);
+      const prog=state.catProgress[id];const stars=state.catStars[id];
+      html+=`<div class="cat-card" data-cat="${id}" style="border-color:${prog>0?'var(--sg)':'transparent'}">
+        <div class="cat-icon">${cat.icon}</div>
+        <div class="cat-name">${cat.name}</div>
+        <div class="cat-req">${cat.req}</div>
+        <div class="cat-progress">${prog}/${cat.questions.length} done</div>
+        <div class="cat-stars">${[1,2,3].map(i=>`<span class="star ${stars>=i?'filled':''}">★</span>`).join('')}</div>
+      </div>`;
+    });
+    html+='</div>';
+  });
+  const totalQ=DATA.categories.reduce((a,c)=>a+c.questions.length,0);
+  const done=Object.values(state.catProgress).reduce((a,b)=>a+b,0);
+  html+=`<div style="margin-top:14px;text-align:center;font-size:12px;color:var(--muted)">${done>0?`✅ ${state.totalCorrect}/${state.totalAnswered} correct · ${done}/${totalQ} questions completed`:'Select any category to start your trail to First Class!'}</div>`;
+  return html;
 }
 
-function renderQuiz() {
-  const cat = DATA.categories.find(c => c.id === state.currentCat);
-  const qi = state.currentQ;
-  const q = cat.questions[qi];
-  const isMCQ = q.type === 'mcq';
-  const feedbackHtml = renderFeedback();
-
+function renderQuiz(){
+  const cat=DATA.categories.find(c=>c.id===state.currentCat);
+  const q=cat.questions[state.currentQ];
+  const isMCQ=q.type==='mcq';
   return `
     <div class="quiz-header">
       <button class="back-btn" id="back-btn">← Back</button>
       <span class="q-category">${cat.icon} ${cat.name}</span>
-      <span class="q-counter">${qi+1}/${cat.questions.length}</span>
+      <span class="q-counter">${state.currentQ+1}/${cat.questions.length}</span>
     </div>
     <div class="timer-bar-wrap"><div class="timer-bar" id="timer-bar" style="width:100%"></div></div>
     <div class="quiz-card">
       <span class="q-type-badge ${isMCQ?'mcq-badge':'frq-badge'}">${isMCQ?'Multiple Choice':'Written Response'}</span>
+      <span class="req-tag">${cat.req}</span>
       <div class="q-text">${q.q}</div>
-      ${q.hint ? `<div class="q-hint">💡 Hint: ${q.hint}</div>` : ''}
-      ${isMCQ ? renderMCQ(q) : renderFRQ()}
-      ${feedbackHtml}
-      ${state.feedback !== null ? `<div class="action-row"><button class="btn btn-primary" id="next-btn">${qi+1<cat.questions.length?'Next Question ➡':'See Results 🏆'}</button></div>` : ''}
+      ${q.hint?`<div class="q-hint">💡 ${q.hint}</div>`:''}
+      ${isMCQ?renderMCQ(q):renderFRQ()}
+      ${renderFeedback()}
+      ${state.feedback!==null?`<div class="action-row"><button class="btn btn-primary" id="next-btn">${state.currentQ+1<cat.questions.length?'Next Question ➡':'See Results 🏆'}</button></div>`:''}
     </div>`;
 }
 
-function renderMCQ(q) {
-  return `<div class="mcq-options">
-    ${q.options.map((opt, i) => {
-      let cls = 'mcq-option';
-      if (state.feedback !== null) {
-        cls += ' disabled';
-        if (i === q.answer) cls += ' correct';
-        else if (i === state.answers[state.currentQ] && i !== q.answer) cls += ' wrong';
-      }
-      return `<button class="mcq-option ${state.feedback!==null?'disabled':''} ${state.feedback!==null&&i===q.answer?'correct':''} ${state.feedback!==null&&state.answers[state.currentQ]===i&&i!==q.answer?'wrong':''}" data-idx="${i}" id="mcq-opt-${i}">${String.fromCharCode(65+i)}. ${opt}</button>`;
-    }).join('')}
+function renderMCQ(q){
+  return `<div class="mcq-options">${q.options.map((opt,i)=>{
+    let cls='mcq-option';
+    if(state.feedback!==null){cls+=' disabled';if(i===q.answer)cls+=' correct';else if(i===state.answers[state.currentQ]&&i!==q.answer)cls+=' wrong';}
+    return `<button class="${cls}" data-idx="${i}">${String.fromCharCode(65+i)}. ${opt}</button>`;
+  }).join('')}</div>`;
+}
+
+function renderFRQ(){
+  return `<textarea class="frq-textarea" id="frq-input" placeholder="Write your answer here — show what you know! Aim for 2-3 solid sentences minimum." ${state.feedback!==null?'disabled':''}>${state.frqAnswer}</textarea>
+  <div class="frq-note">📝 AI merit badge counselor will review your answer</div>
+  ${state.feedback===null?`<div class="action-row"><button class="btn btn-primary" id="submit-frq-btn" ${state.frqAnswer.length<10?'disabled':''}>Submit Answer</button></div>`:''}`;
+}
+
+function renderFeedback(){
+  if(state.feedbackLoading)return`<div class="feedback-box feedback-ai"><div class="feedback-label">🤖 Counselor reviewing...</div><div class="loading-dots"><span></span><span></span><span></span></div></div>`;
+  if(state.feedback===null)return'';
+  const f=state.feedback;
+  if(f.type==='mcq-correct')return`<div class="feedback-box feedback-correct"><div class="feedback-label">✅ Correct! +${f.points} XP</div><div>${f.text}</div></div>`;
+  if(f.type==='mcq-wrong')return`<div class="feedback-box feedback-wrong"><div class="feedback-label">❌ Not quite</div><div>${f.text}</div></div>`;
+  return`<div class="feedback-box feedback-ai"><div class="feedback-label">📋 Counselor Feedback</div><div>${f.text}</div></div>`;
+}
+
+function renderResults(){
+  const cat=DATA.categories.find(c=>c.id===state.currentCat);
+  const correct=state.quizCorrect,total=cat.questions.length;
+  const pct=Math.round((correct/total)*100);
+  const stars=pct>=90?3:pct>=70?2:pct>=50?1:0;
+  const emoji=pct>=90?'🏆':pct>=70?'⭐':pct>=50?'👍':'📚';
+  const title=pct>=90?'Eagle Scout Level!':pct>=70?'Great Work, Scout!':pct>=50?'Solid Effort!':'Keep Practicing!';
+  return`<div class="results-card">
+    <div class="results-icon">${emoji}</div>
+    <div class="results-title">${title}</div>
+    <div class="results-sub">${cat.icon} ${cat.name} · ${cat.req}</div>
+    <div class="score-ring"><span class="score-num">${correct}</span><span class="score-denom">/ ${total}</span></div>
+    <div class="stat-row">
+      <div class="stat-box"><div class="stat-val">${pct}%</div><div class="stat-lbl">Accuracy</div></div>
+      <div class="stat-box"><div class="stat-val">${state.xp}</div><div class="stat-lbl">Total XP</div></div>
+      <div class="stat-box"><div class="stat-val">${state.streak}</div><div class="stat-lbl">Streak 🔥</div></div>
+    </div>
+    <div class="cat-stars" style="justify-content:center;margin-bottom:16px;font-size:22px">${[1,2,3].map(i=>`<span class="star ${stars>=i?'filled':''}">★</span>`).join('')}</div>
+    <div class="action-row">
+      <button class="btn btn-secondary" id="retry-btn">🔄 Retry</button>
+      <button class="btn btn-primary" id="home-btn">🏠 Trail Map</button>
+    </div>
   </div>`;
 }
 
-function renderFRQ() {
-  return `<textarea class="frq-textarea" id="frq-input" placeholder="Type your answer here... Don't worry, there's no perfect answer—show what you know!" ${state.feedback!==null?'disabled':''}>${state.frqAnswer}</textarea>
-  <div class="frq-note">📝 FRQ answers are reviewed—write at least 2-3 sentences for full credit</div>
-  ${state.feedback === null ? `<div class="action-row"><button class="btn btn-primary" id="submit-frq-btn" ${state.frqAnswer.length<10?'disabled':''}>Submit Answer</button></div>` : ''}`;
+function attachEvents(){
+  document.querySelectorAll('.cat-card').forEach(card=>card.addEventListener('click',()=>startQuiz(card.dataset.cat)));
+  const back=document.getElementById('back-btn');
+  if(back)back.addEventListener('click',()=>{stopTimer();state.screen='home';state.feedback=null;render();});
+  document.querySelectorAll('.mcq-option').forEach(btn=>{
+    if(!btn.classList.contains('disabled'))btn.addEventListener('click',()=>answerMCQ(parseInt(btn.dataset.idx)));
+  });
+  const frqInput=document.getElementById('frq-input');
+  if(frqInput)frqInput.addEventListener('input',()=>{
+    state.frqAnswer=frqInput.value;
+    const sb=document.getElementById('submit-frq-btn');if(sb)sb.disabled=state.frqAnswer.length<10;
+  });
+  const sf=document.getElementById('submit-frq-btn');if(sf)sf.addEventListener('click',()=>submitFRQ());
+  const nxt=document.getElementById('next-btn');if(nxt)nxt.addEventListener('click',()=>nextQuestion());
+  const retry=document.getElementById('retry-btn');if(retry)retry.addEventListener('click',()=>startQuiz(state.currentCat));
+  const home=document.getElementById('home-btn');if(home)home.addEventListener('click',()=>{state.screen='home';state.feedback=null;render();});
 }
 
-function renderFeedback() {
-  if (state.feedbackLoading) {
-    return `<div class="feedback-box feedback-ai">
-      <div class="feedback-label">🤖 Counselor is reviewing...</div>
-      <div class="loading-dots"><span></span><span></span><span></span></div>
-    </div>`;
-  }
-  if (state.feedback === null) return '';
-  const f = state.feedback;
-  if (f.type === 'mcq-correct') {
-    return `<div class="feedback-box feedback-correct"><div class="feedback-label">✅ Excellent! +${f.points} XP</div><div>${f.text}</div></div>`;
-  } else if (f.type === 'mcq-wrong') {
-    return `<div class="feedback-box feedback-wrong"><div class="feedback-label">❌ Not quite</div><div>${f.text}</div></div>`;
-  } else {
-    return `<div class="feedback-box feedback-ai"><div class="feedback-label">📋 Counselor Feedback</div><div>${f.text}</div></div>`;
-  }
+function startQuiz(catId){
+  stopTimer();state.currentCat=catId;state.currentQ=0;state.answers=[];
+  state.frqAnswer='';state.feedback=null;state.feedbackLoading=false;
+  state.screen='quiz';state.quizCorrect=0;render();beginTimer();
 }
 
-function renderResults() {
-  const cat = DATA.categories.find(c => c.id === state.currentCat);
-  const correct = state.quizCorrect;
-  const total = cat.questions.length;
-  const pct = Math.round((correct/total)*100);
-  let stars = pct >= 90 ? 3 : pct >= 70 ? 2 : pct >= 50 ? 1 : 0;
-  let emoji = pct >= 90 ? '🏆' : pct >= 70 ? '⭐' : pct >= 50 ? '👍' : '📚';
-  let title = pct >= 90 ? 'Eagle Scout Performance!' : pct >= 70 ? 'Great Trail Blazing!' : pct >= 50 ? 'Good Effort, Scout!' : 'Keep Practicing!';
-
-  return `
-    <div class="results-card">
-      <div class="results-icon">${emoji}</div>
-      <div class="results-title">${title}</div>
-      <div class="results-sub">${cat.icon} ${cat.name}</div>
-      <div class="score-ring">
-        <span class="score-num">${correct}</span>
-        <span class="score-denom">/ ${total}</span>
-      </div>
-      <div class="stat-row">
-        <div class="stat-box"><div class="stat-val">${pct}%</div><div class="stat-lbl">Accuracy</div></div>
-        <div class="stat-box"><div class="stat-val">${state.xp}</div><div class="stat-lbl">Total XP</div></div>
-        <div class="stat-box"><div class="stat-val">${state.streak}</div><div class="stat-lbl">Streak 🔥</div></div>
-      </div>
-      <div class="cat-stars" style="justify-content:center;margin-bottom:16px;font-size:24px">
-        ${[1,2,3].map(i=>`<span class="star ${stars>=i?'filled':''}"">★</span>`).join('')}
-      </div>
-      <div class="action-row">
-        <button class="btn btn-secondary" id="retry-btn">🔄 Retry</button>
-        <button class="btn btn-primary" id="home-btn">🏠 Trail Map</button>
-      </div>
-    </div>`;
+function beginTimer(){
+  const cat=DATA.categories.find(c=>c.id===state.currentCat);
+  const q=cat.questions[state.currentQ];
+  const secs=q.type==='frq'?150:60;
+  state.currentMaxTime=secs;
+  startTimer(secs,()=>{if(state.feedback===null){if(q.type==='mcq')answerMCQ(-1);else submitFRQ(true);}});
 }
 
-function attachEvents() {
-  document.querySelectorAll('.cat-card').forEach(card => {
-    card.addEventListener('click', () => startQuiz(card.dataset.cat));
-  });
-
-  const backBtn = document.getElementById('back-btn');
-  if (backBtn) backBtn.addEventListener('click', () => {
-    stopTimer();
-    state.screen = 'home';
-    state.feedback = null;
-    render();
-  });
-
-  document.querySelectorAll('[id^="mcq-opt-"]').forEach(btn => {
-    btn.addEventListener('click', () => {
-      if (state.feedback !== null) return;
-      answerMCQ(parseInt(btn.dataset.idx));
-    });
-  });
-
-  const frqInput = document.getElementById('frq-input');
-  if (frqInput) {
-    frqInput.addEventListener('input', () => {
-      state.frqAnswer = frqInput.value;
-      const submitBtn = document.getElementById('submit-frq-btn');
-      if (submitBtn) submitBtn.disabled = state.frqAnswer.length < 10;
-    });
-  }
-
-  const submitFRQ = document.getElementById('submit-frq-btn');
-  if (submitFRQ) submitFRQ.addEventListener('click', () => submitFRQAnswer());
-
-  const nextBtn = document.getElementById('next-btn');
-  if (nextBtn) nextBtn.addEventListener('click', () => nextQuestion());
-
-  const retryBtn = document.getElementById('retry-btn');
-  if (retryBtn) retryBtn.addEventListener('click', () => startQuiz(state.currentCat));
-
-  const homeBtn = document.getElementById('home-btn');
-  if (homeBtn) homeBtn.addEventListener('click', () => {
-    state.screen = 'home'; state.feedback = null; render();
-  });
-}
-
-function startQuiz(catId) {
+function answerMCQ(idx){
   stopTimer();
-  state.currentCat = catId;
-  state.currentQ = 0;
-  state.answers = [];
-  state.frqAnswer = '';
-  state.feedback = null;
-  state.feedbackLoading = false;
-  state.screen = 'quiz';
-  state.quizCorrect = 0;
-  render();
-  beginTimer();
-}
-
-function beginTimer() {
-  const cat = DATA.categories.find(c => c.id === state.currentCat);
-  const q = cat.questions[state.currentQ];
-  const secs = q.type === 'frq' ? 120 : 60;
-  startTimer(secs, () => {
-    if (state.feedback === null) {
-      if (q.type === 'mcq') answerMCQ(-1);
-      else submitFRQAnswer(true);
-    }
-  });
-}
-
-function answerMCQ(idx) {
-  stopTimer();
-  const cat = DATA.categories.find(c => c.id === state.currentCat);
-  const q = cat.questions[state.currentQ];
-  state.answers[state.currentQ] = idx;
-  const correct = idx === q.answer;
-  if (correct) {
-    state.xp += q.points;
-    state.streak++;
-    state.quizCorrect++;
-    state.totalCorrect++;
+  const cat=DATA.categories.find(c=>c.id===state.currentCat);
+  const q=cat.questions[state.currentQ];
+  state.answers[state.currentQ]=idx;
+  const correct=idx===q.answer;
+  if(correct){
+    state.xp+=q.points;state.streak++;state.quizCorrect++;state.totalCorrect++;
     showXP(q.points);
-    if (state.streak === 5) showAchievement('5 in a row! Hot Streak! 🔥');
-    if (state.streak === 10) showAchievement('10 answers correct! Pathfinder! ⭐');
-    state.feedback = { type: 'mcq-correct', text: q.explanation, points: q.points };
-  } else {
-    state.streak = 0;
-    state.feedback = { type: 'mcq-wrong', text: q.explanation };
+    if(state.streak===5)showAchievement('5 in a row — Hot Streak! 🔥');
+    if(state.streak===10)showAchievement('10 correct! Pathfinder! ⭐');
+    if(state.xp>=500)showAchievement('500 XP — Trail Blazer! 🏕️');
+    state.feedback={type:'mcq-correct',text:q.explanation,points:q.points};
+  }else{
+    state.streak=0;
+    state.feedback={type:'mcq-wrong',text:q.explanation};
   }
-  state.totalAnswered++;
-  render();
+  state.totalAnswered++;render();
 }
 
-async function submitFRQAnswer(timedOut = false) {
+async function submitFRQ(timedOut=false){
   stopTimer();
-  const cat = DATA.categories.find(c => c.id === state.currentCat);
-  const q = cat.questions[state.currentQ];
-  const answer = timedOut ? (state.frqAnswer || '[Time ran out—no answer submitted]') : state.frqAnswer;
-  state.feedbackLoading = true;
-  state.answers[state.currentQ] = answer;
-  state.totalAnswered++;
-  render();
-  const feedback = await gradeFRQ(q.q, q.rubric, answer);
-  state.feedbackLoading = false;
-  const isGood = feedback.toLowerCase().includes('excellent') || feedback.toLowerCase().includes('great') || feedback.toLowerCase().includes('good');
-  if (isGood) {
-    state.xp += Math.floor(q.points * 0.8);
-    state.streak++;
-    state.quizCorrect++;
-    state.totalCorrect++;
-    showXP(Math.floor(q.points * 0.8));
-  } else {
-    state.xp += Math.floor(q.points * 0.3);
-    state.streak = 0;
-    showXP(Math.floor(q.points * 0.3));
-  }
-  state.feedback = { type: 'frq', text: feedback };
-  render();
+  const cat=DATA.categories.find(c=>c.id===state.currentCat);
+  const q=cat.questions[state.currentQ];
+  const answer=timedOut?(state.frqAnswer||'[Time ran out]'):state.frqAnswer;
+  state.feedbackLoading=true;state.answers[state.currentQ]=answer;state.totalAnswered++;render();
+  const feedback=await gradeFRQ(q.q,q.rubric,answer);
+  state.feedbackLoading=false;
+  const isGood=feedback.toLowerCase().includes('excellent')||feedback.toLowerCase().includes('great')||feedback.toLowerCase().includes('good');
+  const pts=isGood?Math.floor(q.points*.8):Math.floor(q.points*.3);
+  state.xp+=pts;showXP(pts);
+  if(isGood){state.streak++;state.quizCorrect++;state.totalCorrect++;}else{state.streak=0;}
+  state.feedback={type:'frq',text:feedback};render();
 }
 
-function nextQuestion() {
-  const cat = DATA.categories.find(c => c.id === state.currentCat);
-  state.currentQ++;
-  state.feedback = null;
-  state.frqAnswer = '';
-  if (state.currentQ >= cat.questions.length) {
-    const correct = state.quizCorrect;
-    const total = cat.questions.length;
-    const pct = Math.round((correct/total)*100);
-    const stars = pct >= 90 ? 3 : pct >= 70 ? 2 : pct >= 50 ? 1 : 0;
-    state.catProgress[state.currentCat] = total;
-    if (stars > (state.catStars[state.currentCat]||0)) {
-      state.catStars[state.currentCat] = stars;
-      if (stars === 3) showAchievement('Perfect Score! Category Master! 🏆');
-      else if (stars === 2) showAchievement('Strong finish! Keep it up! ⭐');
+function nextQuestion(){
+  const cat=DATA.categories.find(c=>c.id===state.currentCat);
+  state.currentQ++;state.feedback=null;state.frqAnswer='';
+  if(state.currentQ>=cat.questions.length){
+    const pct=Math.round((state.quizCorrect/cat.questions.length)*100);
+    const stars=pct>=90?3:pct>=70?2:pct>=50?1:0;
+    state.catProgress[state.currentCat]=cat.questions.length;
+    if(stars>(state.catStars[state.currentCat]||0)){
+      state.catStars[state.currentCat]=stars;
+      if(stars===3)showAchievement('Perfect score — Category Master! 🏆');
     }
-    const allDone = Object.values(state.catProgress).every(v=>v>0);
-    if (allDone) showAchievement('All categories complete! You\'re on the Eagle Trail! 🦅');
-    stopTimer();
-    state.screen = 'results';
-    render();
-    return;
+    const allDone=Object.values(state.catProgress).every((v,i)=>v>=DATA.categories[i].questions.length);
+    if(allDone)showAchievement('All 8 categories done — Eagle Trail! 🦅');
+    stopTimer();state.screen='results';render();return;
   }
-  render();
-  beginTimer();
+  render();beginTimer();
 }
 
 render();
