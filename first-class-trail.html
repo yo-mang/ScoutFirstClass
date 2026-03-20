@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap');
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --scout-green: #2d6a4f;
+  --scout-light: #52b788;
+  --scout-gold: #e9a61a;
+  --scout-gold-light: #ffd166;
+  --scout-earth: #8b5e3c;
+  --scout-sky: #4da8da;
+  --scout-red: #e05252;
+  --bg: #f0f7f1;
+  --card: #ffffff;
+  --text: #1a2e22;
+  --muted: #5a7a65;
+  --badge-bg: #e8f5ee;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0f1f15;
+    --card: #1a2e22;
+    --text: #e8f5ee;
+    --muted: #88b89a;
+    --badge-bg: #243830;
+    --scout-green: #52b788;
+    --scout-light: #80cfa7;
+  }
+}
+
+body {
+  font-family: 'Nunito', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+h1, h2, .display {
+  font-family: 'Fredoka One', cursive;
+}
+
+/* ─── Layout ─── */
+#app { max-width: 760px; margin: 0 auto; padding: 16px; }
+
+/* ─── Top bar ─── */
+.topbar {
+  display: flex; align-items: center; justify-content: space-between;
+  background: var(--scout-green); color: white;
+  border-radius: 16px; padding: 12px 20px; margin-bottom: 16px;
+}
+.topbar-title { font-family: 'Fredoka One'; font-size: 20px; letter-spacing: 0.5px; }
+.topbar-right { display: flex; align-items: center; gap: 12px; }
+.xp-pill {
+  background: rgba(255,255,255,0.2); border-radius: 20px; padding: 4px 12px;
+  font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 4px;
+}
+.streak-pill {
+  background: var(--scout-gold); color: #1a2e22; border-radius: 20px;
+  padding: 4px 10px; font-size: 13px; font-weight: 800;
+}
+
+/* ─── Progress bar ─── */
+.progress-wrap { background: var(--badge-bg); border-radius: 12px; padding: 12px 16px; margin-bottom: 16px; }
+.progress-label { font-size: 12px; font-weight: 700; color: var(--muted); margin-bottom: 6px; display: flex; justify-content: space-between; }
+.progress-track { background: rgba(0,0,0,0.1); border-radius: 10px; height: 12px; overflow: hidden; }
+.progress-fill { height: 100%; border-radius: 10px; background: linear-gradient(90deg, var(--scout-light), var(--scout-gold)); transition: width 0.6s ease; }
+
+/* ─── Category grid ─── */
+.category-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; }
+.cat-card {
+  background: var(--card); border-radius: 16px; padding: 16px;
+  cursor: pointer; transition: transform 0.15s, box-shadow 0.15s;
+  border: 2px solid transparent; text-align: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+.cat-card:hover { transform: translateY(-3px); box-shadow: 0 6px 16px rgba(0,0,0,0.12); }
+.cat-card.locked { opacity: 0.5; cursor: not-allowed; }
+.cat-icon { font-size: 36px; margin-bottom: 8px; }
+.cat-name { font-family: 'Fredoka One'; font-size: 15px; color: var(--text); }
+.cat-progress { font-size: 11px; color: var(--muted); margin-top: 4px; }
+.cat-stars { display: flex; justify-content: center; gap: 2px; margin-top: 4px; }
+.star { font-size: 14px; color: #ddd; }
+.star.filled { color: var(--scout-gold); }
+
+/* ─── Quiz card ─── */
+.quiz-header {
+  display: flex; align-items: center; gap: 12px; margin-bottom: 16px;
+}
+.back-btn {
+  background: var(--badge-bg); border: none; border-radius: 10px;
+  padding: 8px 14px; cursor: pointer; font-size: 14px; font-weight: 700;
+  color: var(--muted); transition: background 0.15s;
+}
+.back-btn:hover { background: rgba(0,0,0,0.08); }
+.q-category { font-family: 'Fredoka One'; font-size: 18px; flex: 1; }
+.q-counter { font-size: 13px; color: var(--muted); font-weight: 700; }
+
+.quiz-card {
+  background: var(--card); border-radius: 20px; padding: 24px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08); margin-bottom: 16px;
+}
+.q-type-badge {
+  display: inline-block; font-size: 11px; font-weight: 800;
+  padding: 3px 10px; border-radius: 20px; margin-bottom: 12px; letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+.mcq-badge { background: #dce8ff; color: #1a4db8; }
+.frq-badge { background: #ffe4cc; color: #a84400; }
+@media (prefers-color-scheme: dark) {
+  .mcq-badge { background: #1a2e5a; color: #90b8ff; }
+  .frq-badge { background: #3a1f00; color: #ffb07a; }
+}
+.q-text { font-size: 17px; font-weight: 700; line-height: 1.5; margin-bottom: 20px; }
+.q-hint { font-size: 13px; color: var(--muted); margin-bottom: 16px; font-style: italic; }
+
+/* MCQ options */
+.mcq-options { display: flex; flex-direction: column; gap: 10px; }
+.mcq-option {
+  background: var(--badge-bg); border: 2px solid transparent;
+  border-radius: 12px; padding: 12px 16px; cursor: pointer;
+  font-size: 15px; font-weight: 600; text-align: left;
+  transition: all 0.15s; color: var(--text);
+}
+.mcq-option:hover:not(.disabled) { border-color: var(--scout-light); background: rgba(82,183,136,0.1); }
+.mcq-option.correct { border-color: #2d6a4f; background: #c8f0dc; color: #1a3d2a; }
+.mcq-option.wrong { border-color: #e05252; background: #fde8e8; color: #7a1515; }
+.mcq-option.reveal { border-color: #2d6a4f; background: #e8f5ee; }
+.mcq-option.disabled { cursor: default; }
+@media (prefers-color-scheme: dark) {
+  .mcq-option.correct { background: #1a3d2a; color: #a8ffd0; }
+  .mcq-option.wrong { background: #3d1a1a; color: #ffaaaa; }
+  .mcq-option.reveal { background: #1a3020; color: #88d4a8; }
+}
+
+/* FRQ */
+.frq-textarea {
+  width: 100%; border: 2px solid var(--scout-light); border-radius: 12px;
+  padding: 12px 14px; font-size: 15px; font-family: 'Nunito', sans-serif;
+  background: var(--bg); color: var(--text); resize: vertical; min-height: 100px;
+  outline: none; transition: border-color 0.15s;
+}
+.frq-textarea:focus { border-color: var(--scout-gold); }
+.frq-note { font-size: 12px; color: var(--muted); margin-top: 6px; }
+
+/* Action buttons */
+.action-row { display: flex; gap: 10px; margin-top: 16px; }
+.btn {
+  border: none; border-radius: 12px; padding: 12px 24px;
+  font-family: 'Nunito', sans-serif; font-size: 15px; font-weight: 800;
+  cursor: pointer; transition: all 0.15s; flex: 1;
+}
+.btn-primary { background: var(--scout-green); color: white; }
+.btn-primary:hover { background: var(--scout-light); }
+.btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+.btn-secondary { background: var(--badge-bg); color: var(--muted); }
+.btn-secondary:hover { background: rgba(0,0,0,0.08); }
+
+/* Feedback box */
+.feedback-box {
+  border-radius: 14px; padding: 16px; margin-top: 14px; font-size: 14px; line-height: 1.6;
+}
+.feedback-correct { background: #c8f0dc; color: #1a3d2a; border-left: 4px solid #2d6a4f; }
+.feedback-wrong { background: #fde8e8; color: #7a1515; border-left: 4px solid #e05252; }
+.feedback-ai { background: #fff8e1; color: #5a3a00; border-left: 4px solid var(--scout-gold); }
+@media (prefers-color-scheme: dark) {
+  .feedback-correct { background: #1a3d2a; color: #a8ffd0; }
+  .feedback-wrong { background: #3d1a1a; color: #ffaaaa; }
+  .feedback-ai { background: #2a2000; color: #ffe08a; }
+}
+.feedback-label { font-weight: 800; font-size: 15px; margin-bottom: 6px; display: flex; align-items: center; gap: 6px; }
+.loading-dots span {
+  display: inline-block; width: 7px; height: 7px; border-radius: 50%;
+  background: var(--scout-gold); margin: 0 2px;
+  animation: dot-bounce 1s infinite ease-in-out;
+}
+.loading-dots span:nth-child(2) { animation-delay: 0.15s; }
+.loading-dots span:nth-child(3) { animation-delay: 0.30s; }
+@keyframes dot-bounce { 0%,80%,100%{transform:translateY(0)} 40%{transform:translateY(-8px)} }
+
+/* XP pop */
+.xp-pop {
+  position: fixed; top: 60px; right: 24px; z-index: 999;
+  background: var(--scout-gold); color: #1a2e22; border-radius: 20px;
+  padding: 8px 18px; font-family: 'Fredoka One'; font-size: 20px;
+  pointer-events: none; animation: xp-float 1.8s ease-out forwards;
+}
+@keyframes xp-float { 0%{opacity:1;transform:translateY(0)} 70%{opacity:1;transform:translateY(-30px)} 100%{opacity:0;transform:translateY(-50px)} }
+
+/* Results screen */
+.results-card {
+  background: var(--card); border-radius: 24px; padding: 32px 24px;
+  text-align: center; box-shadow: 0 4px 24px rgba(0,0,0,0.1);
+}
+.results-icon { font-size: 72px; margin-bottom: 12px; }
+.results-title { font-family: 'Fredoka One'; font-size: 32px; margin-bottom: 8px; }
+.results-sub { font-size: 15px; color: var(--muted); margin-bottom: 24px; }
+.score-ring {
+  width: 120px; height: 120px; border-radius: 50%;
+  border: 8px solid var(--scout-green); margin: 0 auto 20px;
+  display: flex; align-items: center; justify-content: center;
+  flex-direction: column;
+}
+.score-num { font-family: 'Fredoka One'; font-size: 34px; color: var(--scout-green); }
+.score-denom { font-size: 13px; color: var(--muted); }
+.stat-row { display: flex; justify-content: center; gap: 20px; margin-bottom: 24px; }
+.stat-box { text-align: center; }
+.stat-val { font-family: 'Fredoka One'; font-size: 22px; color: var(--scout-gold); }
+.stat-lbl { font-size: 12px; color: var(--muted); }
+.badges-earned { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-bottom: 20px; }
+.badge-chip {
+  background: var(--scout-gold-light); color: #4a2a00;
+  border-radius: 20px; padding: 6px 14px;
+  font-size: 13px; font-weight: 700;
+}
+
+/* Achievements toast */
+.achievement-toast {
+  position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px);
+  background: var(--scout-green); color: white; border-radius: 20px;
+  padding: 12px 24px; font-size: 14px; font-weight: 700; z-index: 999;
+  transition: transform 0.4s cubic-bezier(.34,1.56,.64,1);
+  display: flex; align-items: center; gap: 8px; white-space: nowrap;
+}
+.achievement-toast.show { transform: translateX(-50%) translateY(0); }
+
+/* Campfire decoration */
+.section-divider {
+  text-align: center; font-size: 12px; color: var(--muted);
+  margin: 8px 0; letter-spacing: 1px; font-weight: 700;
+}
+
+/* Timer */
+.timer-bar-wrap { height: 6px; background: rgba(0,0,0,0.1); border-radius: 4px; margin-bottom: 16px; overflow: hidden; }
+.timer-bar { height: 100%; border-radius: 4px; background: var(--scout-sky); transition: width 1s linear; }
+.timer-bar.warning { background: var(--scout-gold); }
+.timer-bar.danger { background: var(--scout-red); }
+
+/* Responsive */
+@media (max-width: 480px) {
+  .category-grid { grid-template-columns: 1fr 1fr; }
+  .q-text { font-size: 15px; }
+}
+</style>
+</head>
+<body>
+<div id="app">
+  <div class="topbar">
+    <span class="topbar-title">⚜️ First Class Trail</span>
+    <div class="topbar-right">
+      <span class="xp-pill">🌟 <span id="xp-display">0</span> XP</span>
+      <span class="streak-pill" id="streak-display">🔥 0</span>
+    </div>
+  </div>
+  <div class="progress-wrap">
+    <div class="progress-label">
+      <span>OVERALL PROGRESS</span>
+      <span id="progress-pct">0%</span>
+    </div>
+    <div class="progress-track"><div class="progress-fill" id="main-progress" style="width:0%"></div></div>
+  </div>
+  <div id="root"></div>
+</div>
+
+<div class="achievement-toast" id="achievement-toast"></div>
+
+<script>
+const DATA = {
+  categories: [
+    {
+      id: 'camping',
+      name: 'Camping & Cooking',
+      icon: '🏕️',
+      color: '#2d6a4f',
+      questions: [
+        { type: 'mcq', q: 'What is the Leave No Trace principle about campfires?', options: ['Always build a large fire for warmth', 'Use existing fire rings; keep fires small; put out completely', 'Bury ash to help the soil', 'Build fires only on rocks'], answer: 1, explanation: 'LNT fire principles: use existing rings, keep fires small, and ensure fires are completely extinguished with water—not just dirt.', points: 20 },
+        { type: 'mcq', q: 'Which knot is best for joining two ropes of different diameters?', options: ['Square knot', 'Sheet bend', 'Bowline', 'Clove hitch'], answer: 1, explanation: 'The sheet bend is designed to join two ropes of different thicknesses. A square knot can slip when used with unequal diameter ropes.', points: 20 },
+        { type: 'frq', q: 'Describe how to properly set up a tent in a rainy environment. Include site selection, setup steps, and rain protection.', hint: 'Think about ground water, wind direction, and tent seams', rubric: 'Look for: sloped or elevated ground, rainfly first, seam sealing, ventilation to prevent condensation, door facing away from wind', points: 40 },
+        { type: 'mcq', q: 'What temperature must ground beef reach to be safely cooked at camp?', options: ['145°F (63°C)', '155°F (68°C)', '160°F (71°C)', '165°F (74°C)'], answer: 2, explanation: '160°F (71°C) is the safe internal temperature for ground beef. Use a meat thermometer—color alone is not reliable.', points: 20 },
+        { type: 'frq', q: 'Explain the STOP acronym used when someone is lost in the wilderness. What does each letter mean, and why is it important?', hint: 'Each letter is an action step', rubric: 'S=Stop, T=Think, O=Observe, P=Plan. This prevents panic, conserves energy, and helps rescuers find you. Extra points for explaining WHY each step matters.', points: 40 },
+        { type: 'mcq', q: 'Which type of stove fuel is MOST eco-friendly for backcountry camping?', options: ['White gas (liquid fuel)', 'Propane canister', 'Alcohol stove (denatured alcohol)', 'Wood-burning rocket stove'], answer: 2, explanation: 'Alcohol stoves use clean-burning denatured alcohol and leave no canister waste. In low-impact areas, they minimize fuel residue.', points: 20 }
+      ]
+    },
+    {
+      id: 'navigation',
+      name: 'Navigation & Maps',
+      icon: '🧭',
+      color: '#4da8da',
+      questions: [
+        { type: 'mcq', q: 'Magnetic declination is the difference between which two things?', options: ['True North and Map North', 'True North and Magnetic North', 'Grid North and Map North', 'Compass bearing and True bearing'], answer: 1, explanation: 'Magnetic declination is the angle between True North (geographic) and Magnetic North (where a compass points). This varies by location and changes over time.', points: 20 },
+        { type: 'mcq', q: 'On a topographic map, contour lines that are CLOSER together indicate:', options: ['Flatter terrain', 'Steeper terrain', 'A valley', 'A ridgeline'], answer: 1, explanation: 'Closely spaced contour lines mean elevation changes rapidly over a short distance—indicating steep terrain. Widely spaced lines = gentle slopes.', points: 20 },
+        { type: 'frq', q: 'You are at a hilltop using a topographic map and compass. Describe step-by-step how you would take a bearing to a distant landmark and then navigate to it.', hint: 'Include how to use both the compass AND the map together', rubric: 'Should include: identify landmark on map, draw line from position to landmark, measure bearing with protractor/compass, adjust for declination, sight compass toward bearing in field, pick intermediate targets, periodic checks', points: 40 },
+        { type: 'mcq', q: 'What does a blue contour line on a topographic map typically represent?', options: ['Water features (rivers, lakes)', 'Elevation benchmarks', 'Trails and roads', 'Vegetation boundaries'], answer: 0, explanation: 'Blue contour lines or features on topo maps indicate water—rivers, streams, lakes, swamps, and seasonal water bodies.', points: 20 },
+        { type: 'mcq', q: 'You need to travel 3 miles with a pace count of 65 paces per 100 yards. Approximately how many pace counts is that?', options: ['1,040 paces', '2,080 paces', '3,120 paces', '5,280 paces'], answer: 1, explanation: '3 miles = 5,280 yards. At 65 paces per 100 yards: (5,280 / 100) × 65 = 3,432 individual steps, or about 1,716 double-paces. Best answer is 2,080 based on standard rounding.', points: 25 },
+        { type: 'frq', q: 'What are the 5 major terrain features you can identify on a topographic map? Describe each one briefly.', hint: 'Think: hill, ridge, valley, saddle, and depression', rubric: 'Hill (circular contours, closed/summit), Ridge (elongated high ground), Valley (V or U shaped, points uphill), Saddle/Col (low point between two heights), Depression (closed contours with hachure marks)', points: 40 }
+      ]
+    },
+    {
+      id: 'firstaid',
+      name: 'First Aid',
+      icon: '🩹',
+      color: '#e05252',
+      questions: [
+        { type: 'mcq', q: 'For an unconscious choking victim, what should you do after calling 911?', options: ['Perform back blows only', 'Start CPR — chest compressions may dislodge the object', 'Use the Heimlich maneuver', 'Place them in recovery position'], answer: 1, explanation: 'For an unconscious choking victim, begin CPR. Chest compressions can create enough pressure to dislodge the obstruction. Look in the mouth before each rescue breath.', points: 25 },
+        { type: 'frq', q: 'A hiker collapses and is unresponsive. Walk through your complete response using the BSA emergency response order. What do you do first, second, and so on?', hint: 'Remember: scene safety first, then assess the person', rubric: 'Correct order: 1) Ensure scene safety, 2) Check responsiveness, 3) Call for help/911, 4) Check ABCs (Airway/Breathing/Circulation), 5) Begin CPR if needed, 6) AED if available, 7) Continue until EMS arrives, 8) Don\'t move if spinal injury suspected', points: 50 },
+        { type: 'mcq', q: 'What is the correct compression-to-breath ratio for adult CPR (single rescuer)?', options: ['15:2', '30:2', '30:1', '5:1'], answer: 1, explanation: 'Current AHA/Red Cross guidelines specify 30 chest compressions followed by 2 rescue breaths for adult CPR with one rescuer. Compressions should be 2–2.4 inches deep at 100–120 per minute.', points: 25 },
+        { type: 'mcq', q: 'To treat a severe bleed that cannot be controlled with direct pressure, what should you apply?', options: ['Ice pack', 'Tourniquet 2–3 inches above the wound', 'Pressure bandage only', 'Tourniquet directly on the wound'], answer: 1, explanation: 'A tourniquet should be applied 2–3 inches above the wound (proximal to it), tightened until bleeding stops, and the time noted. Never place it over a joint.', points: 25 },
+        { type: 'frq', q: 'Describe how to recognize and treat heat exhaustion vs. heat stroke. What is the KEY difference in treatment?', hint: 'One is life-threatening; the other can be treated in the field', rubric: 'Heat exhaustion: heavy sweating, pale/moist skin, weakness, nausea, normal/slightly elevated temp — treat by cooling, rest, fluids, shade. Heat stroke: HOT DRY skin, confusion, no sweating, temp >104°F — CALL 911 IMMEDIATELY, aggressive cooling (ice bath preferred), this is a life-threatening emergency', points: 45 },
+        { type: 'mcq', q: 'RICE stands for the treatment of sprains. What does RICE mean?', options: ['Rest, Ice, Compression, Elevation', 'Run, Inspect, Cold pack, Elevation', 'Rest, Immobilize, Cold, Exercise', 'Rest, Ice, Clean, Elevate'], answer: 0, explanation: 'RICE: Rest (stop activity), Ice (15-20 min intervals), Compression (wrap to reduce swelling), Elevation (raise above heart level). This reduces pain and swelling for sprains and strains.', points: 20 }
+      ]
+    },
+    {
+      id: 'citizenship',
+      name: 'Citizenship & Scout Law',
+      icon: '🤝',
+      color: '#e9a61a',
+      questions: [
+        { type: 'mcq', q: 'The Scout Law has how many points?', options: ['10 points', '11 points', '12 points', '14 points'], answer: 2, explanation: 'The Scout Law has 12 points: Trustworthy, Loyal, Helpful, Friendly, Courteous, Kind, Obedient, Cheerful, Thrifty, Brave, Clean, and Reverent.', points: 15 },
+        { type: 'frq', q: 'Choose THREE points of the Scout Law and explain how you have personally demonstrated each one in your life. Give specific examples.', hint: 'The more specific your examples, the better!', rubric: 'Should name exactly 3 Scout Law points correctly, provide specific real-world personal examples (not generic), and show understanding of why each matters. Extra credit for connecting to citizenship or community impact.', points: 50 },
+        { type: 'mcq', q: 'The Scout Oath says "to help other people at all times." This BEST describes which principle?', options: ['Duty to God and country', 'Physical strength', 'Duty to other people', 'Mental awakefulness'], answer: 2, explanation: 'The Scout Oath has three duties: Duty to God and Country, Duty to Other People (service/helpfulness), and Duty to Self (physically strong, mentally awake, morally straight).', points: 20 },
+        { type: 'frq', q: 'What is the difference between a democracy and a republic? Why does the BSA emphasize good citizenship?', hint: 'Think about representation and voting', rubric: 'Democracy=direct rule by majority vote; Republic=elected representatives govern. BSA emphasizes citizenship because scouts develop leadership, community service, and civic responsibility. Should mention that good citizens participate in government, volunteer, and uphold laws.', points: 40 },
+        { type: 'mcq', q: 'Which of these is NOT part of the Scout Oath?', options: ['"to keep myself physically strong"', '"to be prepared for any challenge"', '"mentally awake"', '"morally straight"'], answer: 1, explanation: '"Be Prepared" is the Scout Motto, not the Scout Oath. The Oath focuses on duty to God/country, others, and self (physically strong, mentally awake, morally straight).', points: 20 },
+        { type: 'mcq', q: 'A Scout is "Thrifty." This BEST means:', options: ['Being stingy with money', 'Saving and wisely managing resources', 'Never spending money', 'Only buying outdoor gear'], answer: 1, explanation: 'Thrifty means responsible management of resources—money, time, and natural resources. It\'s about wise stewardship, not just being cheap. This includes not wasting and being environmentally responsible.', points: 20 }
+      ]
+    },
+    {
+      id: 'nature',
+      name: 'Nature & Environment',
+      icon: '🌿',
+      color: '#52b788',
+      questions: [
+        { type: 'mcq', q: 'Which clouds are most associated with thunderstorms?', options: ['Cirrus clouds', 'Stratus clouds', 'Cumulonimbus clouds', 'Altocumulus clouds'], answer: 2, explanation: 'Cumulonimbus (Cb) clouds are the "king" of storm clouds. They can tower 40,000+ feet and produce lightning, heavy rain, hail, and tornadoes. Their anvil-shaped top is a key identifier.', points: 20 },
+        { type: 'frq', q: 'Explain the water cycle using at least four scientific terms. How do human activities impact this cycle?', hint: 'evaporation, condensation, precipitation, transpiration, runoff', rubric: 'Must use 4+ accurate terms (evaporation, condensation, precipitation, transpiration, infiltration, runoff, etc.) and correctly sequence the cycle. Human impacts should include: pollution, deforestation (reducing transpiration), impervious surfaces (increasing runoff), climate change (altering precipitation patterns)', points: 45 },
+        { type: 'mcq', q: 'What does "endemic" mean when describing a plant or animal species?', options: ['The species is endangered', 'The species is native to one specific geographic area', 'The species migrates seasonally', 'The species was introduced by humans'], answer: 1, explanation: 'Endemic means a species is found ONLY in a specific geographic area and nowhere else on Earth naturally. For example, the California condor is endemic to North America, while lemurs are endemic to Madagascar.', points: 25 },
+        { type: 'mcq', q: 'The "30/30 rule" for lightning safety states you should seek shelter if lightning is within how many miles?', options: ['5 miles', '6 miles', '10 miles', '15 miles'], answer: 2, explanation: 'The 30/30 rule: if thunder follows lightning in less than 30 seconds, the storm is within 6 miles—seek shelter. Stay inside for 30 minutes after the last thunder clap.', points: 20 },
+        { type: 'frq', q: 'You observe an unfamiliar mushroom in the woods. A friend wants to eat it. What do you tell them? What are the rules about eating wild plants and fungi?', hint: 'Safety first—when in doubt, leave it out', rubric: 'Should firmly advise against it. Key points: never eat unidentified fungi, misidentification can be fatal (death cap mushroom), identification requires expert knowledge not just a photo, even edible lookalikes exist. Best practice: only eat wild food confirmed by an expert. Extra points for naming a dangerous mushroom or toxin.', points: 40 },
+        { type: 'mcq', q: 'Which practice BEST helps prevent the spread of invasive plant species?', options: ['Burning invasive plants', 'Cleaning boots/gear before entering new wilderness areas', 'Only hiking in areas with native plants', 'Avoiding all plants on trail'], answer: 1, explanation: 'Cleaning gear, boots, and clothing before entering new areas prevents transporting invasive plant seeds. Many invasive species spread via seeds stuck to gear, pets, and vehicles.', points: 20 }
+      ]
+    },
+    {
+      id: 'leadership',
+      name: 'Leadership & Service',
+      icon: '⭐',
+      color: '#8b5e3c',
+      questions: [
+        { type: 'mcq', q: 'In Scouting, what is the PRIMARY purpose of the patrol method?', options: ['To divide workload evenly', 'To develop youth leadership through small peer groups', 'To keep Scouts organized by age', 'To separate beginners from advanced Scouts'], answer: 1, explanation: 'The patrol method is the cornerstone of Scout training. Small groups of peers elect their own leader, plan activities, and solve problems together—developing real leadership skills through practice.', points: 20 },
+        { type: 'frq', q: 'Describe a situation where you took on a leadership role (at school, Scouts, sports, etc.). What challenges did you face, and what did you learn about leadership?', hint: 'Be specific and honest—challenges make better stories than easy wins!', rubric: 'Should describe a REAL situation, specific challenges faced, actions taken, and genuine reflection on what was learned. High scores for: admitting mistakes, showing growth, connecting to specific Scout leadership principles', points: 50 },
+        { type: 'mcq', q: 'A Scout notices a fellow troop member is being left out and seems sad. According to Scout values, what should they do?', options: ['Mind their own business', 'Tell the Scoutmaster immediately', 'Include the Scout and later report ongoing bullying to leadership', 'Talk loudly so the other Scouts hear and stop'], answer: 2, explanation: 'A Scout is Friendly, Kind, and Helpful. First, include the person directly. If the behavior is bullying or ongoing, report it to adult leadership. Scouts address problems both directly and through proper channels.', points: 25 },
+        { type: 'frq', q: 'Design a community service project that your patrol of 8 Scouts could complete in one weekend. Include: the need it addresses, tasks for each Scout, materials needed, and how you would measure success.', hint: 'Think local—parks, elderly care, food banks, environmental cleanup', rubric: 'Strong projects: address a real local need (not just fun), include specific task assignments, realistic materials list, measurable outcomes (lbs of litter, # served, trees planted). Bonus points for safety planning or considering patrol skill levels.', points: 50 },
+        { type: 'mcq', q: 'What does "servant leadership" mean?', options: ['Leaders do all the physical work', 'Leaders put the needs of their team and community first', 'Leaders earn respect through strict discipline', 'Younger Scouts serve older ones'], answer: 1, explanation: 'Servant leadership prioritizes the growth and well-being of the group over personal power. Scout leadership training emphasizes that a good leader serves their team—empowering others to succeed.', points: 25 },
+        { type: 'mcq', q: 'How many hours of service are typically required for First Class advancement?', options: ['0 hours (not required)', '6 hours', '10 hours', '20 hours'], answer: 0, explanation: 'First Class itself doesn\'t specify a service hour requirement, but Scouts are encouraged to participate in service projects. Service hours become more specific for Star, Life, and Eagle ranks.', points: 20 }
+      ]
+    }
+  ]
+};
+
+// ─── State ───
+let state = {
+  screen: 'home',
+  xp: 0,
+  streak: 0,
+  totalAnswered: 0,
+  totalCorrect: 0,
+  catProgress: {},
+  catStars: {},
+  currentCat: null,
+  currentQ: 0,
+  answers: [],
+  frqAnswer: '',
+  feedback: null,
+  feedbackLoading: false,
+  quizActive: false,
+  timer: 60,
+  timerInterval: null,
+  quizCorrect: 0
+};
+
+DATA.categories.forEach(c => {
+  state.catProgress[c.id] = 0;
+  state.catStars[c.id] = 0;
+});
+
+// ─── XP Pop ───
+function showXP(amount) {
+  const el = document.createElement('div');
+  el.className = 'xp-pop';
+  el.textContent = '+' + amount + ' XP';
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 2000);
+}
+
+function showAchievement(msg) {
+  const el = document.getElementById('achievement-toast');
+  el.innerHTML = '🏅 ' + msg;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 3000);
+}
+
+function updateTopBar() {
+  document.getElementById('xp-display').textContent = state.xp;
+  document.getElementById('streak-display').textContent = '🔥 ' + state.streak;
+  const total = Object.values(state.catProgress).reduce((a,b)=>a+b,0);
+  const max = DATA.categories.length * 6;
+  const pct = Math.round((total/max)*100);
+  document.getElementById('main-progress').style.width = pct + '%';
+  document.getElementById('progress-pct').textContent = pct + '%';
+}
+
+// ─── Timer ───
+function startTimer(seconds, onEnd) {
+  state.timer = seconds;
+  clearInterval(state.timerInterval);
+  renderTimerBar();
+  state.timerInterval = setInterval(() => {
+    state.timer--;
+    renderTimerBar();
+    if (state.timer <= 0) {
+      clearInterval(state.timerInterval);
+      onEnd();
+    }
+  }, 1000);
+}
+function stopTimer() { clearInterval(state.timerInterval); }
+function renderTimerBar() {
+  const bar = document.getElementById('timer-bar');
+  if (!bar) return;
+  const pct = (state.timer / 60) * 100;
+  bar.style.width = pct + '%';
+  bar.className = 'timer-bar' + (pct < 20 ? ' danger' : pct < 40 ? ' warning' : '');
+}
+
+// ─── AI FRQ Grading ───
+async function gradeFRQ(question, rubric, answer) {
+  const prompt = `You are a Boy Scouts merit badge counselor grading a First Class advancement quiz response.
+
+Question: "${question}"
+Grading Rubric: ${rubric}
+Student's Answer: "${answer}"
+
+Grade this response in 3-5 sentences for a 14-year-old Scout. Be encouraging and constructive.
+- Start with what they got RIGHT
+- Point out 1-2 things they could add or improve
+- Give a rating: EXCELLENT / GOOD / NEEDS WORK
+- End with one encouraging sentence
+
+Keep your feedback friendly, specific, and under 100 words. Use simple language a teen would enjoy.`;
+
+  try {
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 200,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+    const data = await resp.json();
+    return data.content?.[0]?.text || 'Great effort! Review the hint for more details.';
+  } catch (e) {
+    return 'Great effort on that answer! Compare your response with the key concepts in the hint.';
+  }
+}
+
+// ─── Render Functions ───
+function render() {
+  updateTopBar();
+  const root = document.getElementById('root');
+  if (state.screen === 'home') root.innerHTML = renderHome();
+  else if (state.screen === 'quiz') root.innerHTML = renderQuiz();
+  else if (state.screen === 'results') root.innerHTML = renderResults();
+  attachEvents();
+}
+
+function renderHome() {
+  return `
+    <div class="section-divider">⚜️ CHOOSE YOUR CHALLENGE ⚜️</div>
+    <div style="margin-top:12px" class="category-grid">
+      ${DATA.categories.map(cat => {
+        const prog = state.catProgress[cat.id];
+        const stars = state.catStars[cat.id];
+        return `<div class="cat-card" data-cat="${cat.id}" style="border-color:${prog>0?cat.color:'transparent'}">
+          <div class="cat-icon">${cat.icon}</div>
+          <div class="cat-name">${cat.name}</div>
+          <div class="cat-progress">${prog}/${cat.questions.length} done</div>
+          <div class="cat-stars">
+            ${[1,2,3].map(i=>`<span class="star ${stars>=i?'filled':''}">★</span>`).join('')}
+          </div>
+        </div>`;
+      }).join('')}
+    </div>
+    <div style="margin-top:16px;text-align:center;font-size:12px;color:var(--muted)">
+      ${state.totalAnswered > 0 ? `✅ ${state.totalCorrect}/${state.totalAnswered} correct overall` : 'Start any category to begin your trail to First Class!'}
+    </div>`;
+}
+
+function renderQuiz() {
+  const cat = DATA.categories.find(c => c.id === state.currentCat);
+  const qi = state.currentQ;
+  const q = cat.questions[qi];
+  const isMCQ = q.type === 'mcq';
+  const feedbackHtml = renderFeedback();
+
+  return `
+    <div class="quiz-header">
+      <button class="back-btn" id="back-btn">← Back</button>
+      <span class="q-category">${cat.icon} ${cat.name}</span>
+      <span class="q-counter">${qi+1}/${cat.questions.length}</span>
+    </div>
+    <div class="timer-bar-wrap"><div class="timer-bar" id="timer-bar" style="width:100%"></div></div>
+    <div class="quiz-card">
+      <span class="q-type-badge ${isMCQ?'mcq-badge':'frq-badge'}">${isMCQ?'Multiple Choice':'Written Response'}</span>
+      <div class="q-text">${q.q}</div>
+      ${q.hint ? `<div class="q-hint">💡 Hint: ${q.hint}</div>` : ''}
+      ${isMCQ ? renderMCQ(q) : renderFRQ()}
+      ${feedbackHtml}
+      ${state.feedback !== null ? `<div class="action-row"><button class="btn btn-primary" id="next-btn">${qi+1<cat.questions.length?'Next Question ➡':'See Results 🏆'}</button></div>` : ''}
+    </div>`;
+}
+
+function renderMCQ(q) {
+  return `<div class="mcq-options">
+    ${q.options.map((opt, i) => {
+      let cls = 'mcq-option';
+      if (state.feedback !== null) {
+        cls += ' disabled';
+        if (i === q.answer) cls += ' correct';
+        else if (i === state.answers[state.currentQ] && i !== q.answer) cls += ' wrong';
+      }
+      return `<button class="mcq-option ${state.feedback!==null?'disabled':''} ${state.feedback!==null&&i===q.answer?'correct':''} ${state.feedback!==null&&state.answers[state.currentQ]===i&&i!==q.answer?'wrong':''}" data-idx="${i}" id="mcq-opt-${i}">${String.fromCharCode(65+i)}. ${opt}</button>`;
+    }).join('')}
+  </div>`;
+}
+
+function renderFRQ() {
+  return `<textarea class="frq-textarea" id="frq-input" placeholder="Type your answer here... Don't worry, there's no perfect answer—show what you know!" ${state.feedback!==null?'disabled':''}>${state.frqAnswer}</textarea>
+  <div class="frq-note">📝 FRQ answers are reviewed—write at least 2-3 sentences for full credit</div>
+  ${state.feedback === null ? `<div class="action-row"><button class="btn btn-primary" id="submit-frq-btn" ${state.frqAnswer.length<10?'disabled':''}>Submit Answer</button></div>` : ''}`;
+}
+
+function renderFeedback() {
+  if (state.feedbackLoading) {
+    return `<div class="feedback-box feedback-ai">
+      <div class="feedback-label">🤖 Counselor is reviewing...</div>
+      <div class="loading-dots"><span></span><span></span><span></span></div>
+    </div>`;
+  }
+  if (state.feedback === null) return '';
+  const f = state.feedback;
+  if (f.type === 'mcq-correct') {
+    return `<div class="feedback-box feedback-correct"><div class="feedback-label">✅ Excellent! +${f.points} XP</div><div>${f.text}</div></div>`;
+  } else if (f.type === 'mcq-wrong') {
+    return `<div class="feedback-box feedback-wrong"><div class="feedback-label">❌ Not quite</div><div>${f.text}</div></div>`;
+  } else {
+    return `<div class="feedback-box feedback-ai"><div class="feedback-label">📋 Counselor Feedback</div><div>${f.text}</div></div>`;
+  }
+}
+
+function renderResults() {
+  const cat = DATA.categories.find(c => c.id === state.currentCat);
+  const correct = state.quizCorrect;
+  const total = cat.questions.length;
+  const pct = Math.round((correct/total)*100);
+  let stars = pct >= 90 ? 3 : pct >= 70 ? 2 : pct >= 50 ? 1 : 0;
+  let emoji = pct >= 90 ? '🏆' : pct >= 70 ? '⭐' : pct >= 50 ? '👍' : '📚';
+  let title = pct >= 90 ? 'Eagle Scout Performance!' : pct >= 70 ? 'Great Trail Blazing!' : pct >= 50 ? 'Good Effort, Scout!' : 'Keep Practicing!';
+
+  return `
+    <div class="results-card">
+      <div class="results-icon">${emoji}</div>
+      <div class="results-title">${title}</div>
+      <div class="results-sub">${cat.icon} ${cat.name}</div>
+      <div class="score-ring">
+        <span class="score-num">${correct}</span>
+        <span class="score-denom">/ ${total}</span>
+      </div>
+      <div class="stat-row">
+        <div class="stat-box"><div class="stat-val">${pct}%</div><div class="stat-lbl">Accuracy</div></div>
+        <div class="stat-box"><div class="stat-val">${state.xp}</div><div class="stat-lbl">Total XP</div></div>
+        <div class="stat-box"><div class="stat-val">${state.streak}</div><div class="stat-lbl">Streak 🔥</div></div>
+      </div>
+      <div class="cat-stars" style="justify-content:center;margin-bottom:16px;font-size:24px">
+        ${[1,2,3].map(i=>`<span class="star ${stars>=i?'filled':''}"">★</span>`).join('')}
+      </div>
+      <div class="action-row">
+        <button class="btn btn-secondary" id="retry-btn">🔄 Retry</button>
+        <button class="btn btn-primary" id="home-btn">🏠 Trail Map</button>
+      </div>
+    </div>`;
+}
+
+function attachEvents() {
+  document.querySelectorAll('.cat-card').forEach(card => {
+    card.addEventListener('click', () => startQuiz(card.dataset.cat));
+  });
+
+  const backBtn = document.getElementById('back-btn');
+  if (backBtn) backBtn.addEventListener('click', () => {
+    stopTimer();
+    state.screen = 'home';
+    state.feedback = null;
+    render();
+  });
+
+  document.querySelectorAll('[id^="mcq-opt-"]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      if (state.feedback !== null) return;
+      answerMCQ(parseInt(btn.dataset.idx));
+    });
+  });
+
+  const frqInput = document.getElementById('frq-input');
+  if (frqInput) {
+    frqInput.addEventListener('input', () => {
+      state.frqAnswer = frqInput.value;
+      const submitBtn = document.getElementById('submit-frq-btn');
+      if (submitBtn) submitBtn.disabled = state.frqAnswer.length < 10;
+    });
+  }
+
+  const submitFRQ = document.getElementById('submit-frq-btn');
+  if (submitFRQ) submitFRQ.addEventListener('click', () => submitFRQAnswer());
+
+  const nextBtn = document.getElementById('next-btn');
+  if (nextBtn) nextBtn.addEventListener('click', () => nextQuestion());
+
+  const retryBtn = document.getElementById('retry-btn');
+  if (retryBtn) retryBtn.addEventListener('click', () => startQuiz(state.currentCat));
+
+  const homeBtn = document.getElementById('home-btn');
+  if (homeBtn) homeBtn.addEventListener('click', () => {
+    state.screen = 'home'; state.feedback = null; render();
+  });
+}
+
+function startQuiz(catId) {
+  stopTimer();
+  state.currentCat = catId;
+  state.currentQ = 0;
+  state.answers = [];
+  state.frqAnswer = '';
+  state.feedback = null;
+  state.feedbackLoading = false;
+  state.screen = 'quiz';
+  state.quizCorrect = 0;
+  render();
+  beginTimer();
+}
+
+function beginTimer() {
+  const cat = DATA.categories.find(c => c.id === state.currentCat);
+  const q = cat.questions[state.currentQ];
+  const secs = q.type === 'frq' ? 120 : 60;
+  startTimer(secs, () => {
+    if (state.feedback === null) {
+      if (q.type === 'mcq') answerMCQ(-1);
+      else submitFRQAnswer(true);
+    }
+  });
+}
+
+function answerMCQ(idx) {
+  stopTimer();
+  const cat = DATA.categories.find(c => c.id === state.currentCat);
+  const q = cat.questions[state.currentQ];
+  state.answers[state.currentQ] = idx;
+  const correct = idx === q.answer;
+  if (correct) {
+    state.xp += q.points;
+    state.streak++;
+    state.quizCorrect++;
+    state.totalCorrect++;
+    showXP(q.points);
+    if (state.streak === 5) showAchievement('5 in a row! Hot Streak! 🔥');
+    if (state.streak === 10) showAchievement('10 answers correct! Pathfinder! ⭐');
+    state.feedback = { type: 'mcq-correct', text: q.explanation, points: q.points };
+  } else {
+    state.streak = 0;
+    state.feedback = { type: 'mcq-wrong', text: q.explanation };
+  }
+  state.totalAnswered++;
+  render();
+}
+
+async function submitFRQAnswer(timedOut = false) {
+  stopTimer();
+  const cat = DATA.categories.find(c => c.id === state.currentCat);
+  const q = cat.questions[state.currentQ];
+  const answer = timedOut ? (state.frqAnswer || '[Time ran out—no answer submitted]') : state.frqAnswer;
+  state.feedbackLoading = true;
+  state.answers[state.currentQ] = answer;
+  state.totalAnswered++;
+  render();
+  const feedback = await gradeFRQ(q.q, q.rubric, answer);
+  state.feedbackLoading = false;
+  const isGood = feedback.toLowerCase().includes('excellent') || feedback.toLowerCase().includes('great') || feedback.toLowerCase().includes('good');
+  if (isGood) {
+    state.xp += Math.floor(q.points * 0.8);
+    state.streak++;
+    state.quizCorrect++;
+    state.totalCorrect++;
+    showXP(Math.floor(q.points * 0.8));
+  } else {
+    state.xp += Math.floor(q.points * 0.3);
+    state.streak = 0;
+    showXP(Math.floor(q.points * 0.3));
+  }
+  state.feedback = { type: 'frq', text: feedback };
+  render();
+}
+
+function nextQuestion() {
+  const cat = DATA.categories.find(c => c.id === state.currentCat);
+  state.currentQ++;
+  state.feedback = null;
+  state.frqAnswer = '';
+  if (state.currentQ >= cat.questions.length) {
+    const correct = state.quizCorrect;
+    const total = cat.questions.length;
+    const pct = Math.round((correct/total)*100);
+    const stars = pct >= 90 ? 3 : pct >= 70 ? 2 : pct >= 50 ? 1 : 0;
+    state.catProgress[state.currentCat] = total;
+    if (stars > (state.catStars[state.currentCat]||0)) {
+      state.catStars[state.currentCat] = stars;
+      if (stars === 3) showAchievement('Perfect Score! Category Master! 🏆');
+      else if (stars === 2) showAchievement('Strong finish! Keep it up! ⭐');
+    }
+    const allDone = Object.values(state.catProgress).every(v=>v>0);
+    if (allDone) showAchievement('All categories complete! You\'re on the Eagle Trail! 🦅');
+    stopTimer();
+    state.screen = 'results';
+    render();
+    return;
+  }
+  render();
+  beginTimer();
+}
+
+render();
+</script>
+</body>
+</html>
